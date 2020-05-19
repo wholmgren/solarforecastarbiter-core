@@ -711,10 +711,6 @@ def test_calculate_probabilistic_metrics_with_constant_value_simple(
 ])
 @pytest.mark.parametrize('axis,prob_fx_df,ref_fx_df,obs', [
     ('y',
-     pd.Series(np.random.randn(10)*np.sqrt(20)+20),
-     pd.Series(np.random.randn(10)*np.sqrt(20)+20),
-     pd.Series(np.random.randn(10)*np.sqrt(20)+20, dtype=float)),
-    ('y',
      pd.DataFrame({'25': np.random.randn(10)*np.sqrt(20)+20,
                    '50': np.random.randn(10)*np.sqrt(20)+20,
                    '75': np.random.randn(10)*np.sqrt(20)+20}, dtype=float),
