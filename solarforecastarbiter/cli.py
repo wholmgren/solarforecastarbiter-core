@@ -314,7 +314,7 @@ def report(verbose, user, password, base_url, report_file, output_file):
     dash_url = base_url.replace('api', 'dashboard')
     html_report = template.render_html(
         full_report, dash_url,
-        with_timeseries=True, body_only=False)
+        with_timeseries=False, body_only=False)
     with open(output_file, 'w') as f:
         f.write(html_report)
 

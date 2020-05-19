@@ -109,14 +109,17 @@ def single_forecast_data_obj(
 
 
 @pytest.fixture(params=['probfxobs', 'probfxagg',
-                        'probfx_ref', 'probfxagg_ref'])
+                        'probfx_ref', 'probfxagg_ref', 'probfxobsy'])
 def prob_forecasts_data_obj(
         request, single_prob_forecast_observation,
         single_prob_forecast_aggregate,
+        single_prob_forecast_observation_y,
         single_prob_forecast_observation_reffx,
         single_prob_forecast_aggregate_reffx):
     if request.param == 'probfxobs':
         return single_prob_forecast_observation
+    elif request.param == 'probfxobsy':
+        return single_prob_forecast_observation_y
     elif request.param == 'probfxagg':
         return single_prob_forecast_aggregate
     elif request.param == 'probfx_ref':
@@ -679,9 +682,11 @@ def test_calculate_probabilistic_metrics_with_constant_value_simple(
             cv,
             data_object,
             pair.original.reference_forecast)
+        fx = pair.forecast_values[i]
+        fx.name = 'value'
         cv_pair = create_processed_fxobs(
             fxobs,
-            pair.forecast_values[i],
+            fx,
             pair.observation_values,
             ref_values=ref_values)
         result = calculator.calculate_probabilistic_metrics(
@@ -705,6 +710,10 @@ def test_calculate_probabilistic_metrics_with_constant_value_simple(
     PROBABILISTIC_METRICS
 ])
 @pytest.mark.parametrize('axis,prob_fx_df,ref_fx_df,obs', [
+    ('y',
+     pd.Series(np.random.randn(10)*np.sqrt(20)+20),
+     pd.Series(np.random.randn(10)*np.sqrt(20)+20),
+     pd.Series(np.random.randn(10)*np.sqrt(20)+20, dtype=float)),
     ('y',
      pd.DataFrame({'25': np.random.randn(10)*np.sqrt(20)+20,
                    '50': np.random.randn(10)*np.sqrt(20)+20,
