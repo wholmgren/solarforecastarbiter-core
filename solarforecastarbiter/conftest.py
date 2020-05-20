@@ -1172,7 +1172,7 @@ def prob_forecast_constant_value_y_text():
   "aggregate_id": null,
   "variable": "ghi",
   "axis": "y",
-  "constant_value": 0.5
+  "constant_value": 50.0
 }
 """
 
