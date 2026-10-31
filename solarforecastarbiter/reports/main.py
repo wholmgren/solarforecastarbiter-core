@@ -50,7 +50,7 @@ Considerations:
 """
 import logging
 from functools import wraps
-import pkg_resources
+from importlib.metadata import PackageNotFoundError, version
 import platform
 
 
@@ -132,8 +132,8 @@ def get_versions():
     versions = []
     for p in packages:
         try:
-            v = pkg_resources.get_distribution(p).version
-        except pkg_resources.DistributionNotFound:
+            v = version(p)
+        except PackageNotFoundError:
             v = 'None'
         versions.append((p, str(v)))
     versions.append(('python', str(platform.python_version())))

@@ -1,7 +1,7 @@
 import logging
 import json
 from urllib import error
-from pkg_resources import resource_filename, Requirement
+from importlib.resources import files
 
 
 import pandas as pd
@@ -14,10 +14,7 @@ from solarforecastarbiter.io.reference_observations import (
     common, default_forecasts)
 
 
-DEFAULT_SITEFILE = resource_filename(
-    Requirement.parse('solarforecastarbiter'),
-    'solarforecastarbiter/io/reference_observations/'
-    'srml_reference_sites.json')
+DEFAULT_SITEFILE = str(files(__package__) / 'srml_reference_sites.json')
 
 
 # maps the desired variable names to those returned by pvlib.iotools

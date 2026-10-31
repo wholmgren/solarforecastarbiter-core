@@ -7,13 +7,13 @@ import base64
 import itertools
 import datetime as dt
 import json
+from importlib.resources import files
 import shutil
 
 
 import numpy as np
 import pandas as pd
 from pandas.tseries.frequencies import to_offset
-from pkg_resources import resource_filename, Requirement
 import pytest
 
 
@@ -2665,12 +2665,8 @@ def report_metrics(metric_index):
 
 @pytest.fixture()
 def fail_pdf():
-    with open(resource_filename(
-        Requirement.parse('solarforecastarbiter'),
-            'solarforecastarbiter/reports/figures/fail.pdf'),
-              'rb'
-    ) as f:
-        return base64.a85encode(f.read()).decode()
+    pdf = files('solarforecastarbiter.reports.figures') / 'fail.pdf'
+    return base64.a85encode(pdf.read_bytes()).decode()
 
 
 @pytest.fixture()
