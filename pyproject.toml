@@ -19,42 +19,35 @@ classifiers = [
 ]
 requires-python = ">=3.11"
 dependencies = [
-    "click",
-    "netCDF4",
+    "click>=8.1",
+    "jsonschema>=4.17",
+    "netCDF4>=1.6.2",
     "numpy>=1.26, <2",
     "pandas>=1.5, <2",
-    "requests",
-    "xarray",
-    "tables",
     "pvlib>=0.10",
+    "pytz>=2022.7",
+    "requests>=2.28",
     "scipy>=1.11",
-    "statsmodels",
-    "jsonschema",
-    "pytz",
+    "statsmodels>=0.14",
+    # first release with macOS arm64 wheels
+    "tables>=3.10",
+    "urllib3>=1.26",
+    "xarray>=2023.1",
 ]
 dynamic = ["version"]
 
 [project.optional-dependencies]
-test = [
-    "pytest",
-    "pytest-cov",
-    "pytest-mock",
-    "pytest-asyncio",
-    "requests-mock",
-    "pytest-timeout",
-]
-fetch = ["aiohttp", "loky"]
-log = ["sentry-sdk"]
+fetch = ["aiohttp>=3.8.4", "loky>=3.3"]
+log = ["sentry-sdk>=1.14"]
 plotting = [
     "bokeh>=2.4, <3",
+    "jinja2>=3.1",
+    "kaleido>=0.2.1, <0.3",
     "matplotlib>=3.6",
     "plotly>=5, <6",
-    "selenium<4",
-    "jinja2",
-    "kaleido<0.3",
+    "selenium>=3.141, <4",
 ]
-doc = ["sphinx<2.0", "sphinx_rtd_theme"]
-all = ["solarforecastarbiter[test,fetch,log,plotting,doc]"]
+all = ["solarforecastarbiter[fetch,log,plotting]"]
 
 [project.urls]
 "Bug Reports" = "https://github.com/solararbiter/solarforecastarbiter-core/issues"
@@ -64,8 +57,38 @@ Documentation = "https://solarforecastarbiter-core.readthedocs.io"
 [project.scripts]
 solararbiter = "solarforecastarbiter.cli:cli"
 
+[dependency-groups]
+test = [
+    "pytest>=7.2",
+    "pytest-asyncio>=0.21",
+    "pytest-cov>=4",
+    "pytest-mock>=3.10",
+    "pytest-timeout>=2.1",
+    "requests-mock>=1.10",
+]
+lint = ["ruff>=0.6"]
+doc = ["sphinx>=1.8, <2", "sphinx_rtd_theme>=0.4.3"]
+dev = [{include-group = "test"}, {include-group = "lint"}]
+
 [tool.setuptools.packages.find]
 include = ["solarforecastarbiter*"]
 
 [tool.setuptools_scm]
 version_file = "solarforecastarbiter/_version.py"
+
+[tool.uv]
+# Make the lock pick versions with wheels for CI and development machines
+required-environments = [
+    "sys_platform == 'linux' and platform_machine == 'x86_64'",
+    "sys_platform == 'darwin' and platform_machine == 'arm64'",
+]
+
+[tool.ruff]
+line-length = 79
+
+[tool.ruff.lint]
+select = ["E", "F", "W"]
+
+[tool.coverage.run]
+source = ["solarforecastarbiter"]
+omit = ["solarforecastarbiter/_version.py"]

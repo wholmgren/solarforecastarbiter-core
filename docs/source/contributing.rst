@@ -93,11 +93,9 @@ typically more efficient to run and debug the tests in your own local
 environment. See :ref:`installation` for instructions to set up and use
 an environment.
 
-To run the tests locally, install the ``test`` dependencies specified in the
-`pyproject.toml <https://github.com/SolarArbiter/solarforecastarbiter-core/blob/master/pyproject.toml>`_
-file. The unit tests may be run using::
+The unit tests may be run using::
 
-  pytest solarforecastarbiter
+  uv run pytest solarforecastarbiter
 
 Pull request review
 -------------------
