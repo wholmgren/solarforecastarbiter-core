@@ -2,7 +2,7 @@ from functools import partial
 import json
 import logging
 import os
-from pathlib import Path
+from importlib.resources import files
 
 
 import pandas as pd
@@ -18,7 +18,7 @@ from solarforecastarbiter.io.reference_observations import (
 logger = logging.getLogger('reference_data')
 
 
-DEFAULT_SITEFILE = str(Path(__file__).parent / 'pvdaq_reference_sites.json')
+DEFAULT_SITEFILE = str(files(__package__) / 'pvdaq_reference_sites.json')
 
 
 def adjust_site_parameters(site):

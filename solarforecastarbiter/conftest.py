@@ -7,7 +7,7 @@ import base64
 import itertools
 import datetime as dt
 import json
-from pathlib import Path
+from importlib.resources import files
 import shutil
 
 
@@ -2665,9 +2665,8 @@ def report_metrics(metric_index):
 
 @pytest.fixture()
 def fail_pdf():
-    with open(Path(__file__).parent / 'reports' / 'figures' / 'fail.pdf',
-              'rb') as f:
-        return base64.a85encode(f.read()).decode()
+    pdf = files('solarforecastarbiter.reports.figures') / 'fail.pdf'
+    return base64.a85encode(pdf.read_bytes()).decode()
 
 
 @pytest.fixture()
