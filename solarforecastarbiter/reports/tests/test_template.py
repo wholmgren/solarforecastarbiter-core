@@ -10,11 +10,11 @@ import pytest
 
 jinja2 = pytest.importorskip("jinja2", reason="requires [all] packages")  # noqa:E402,E501
 
-from bokeh import __version__ as bokeh_version
-from plotly import __version__ as plotly_version
+from bokeh import __version__ as bokeh_version  # noqa: E402
+from plotly import __version__ as plotly_version  # noqa: E402
 
-from solarforecastarbiter import datamodel
-from solarforecastarbiter.reports import template
+from solarforecastarbiter import datamodel  # noqa: E402
+from solarforecastarbiter.reports import template  # noqa: E402
 
 
 EXPECTED_METRICS_JSON = """[{"name":"0 Day GFS GHI","abbrev":"0 Day GFS GHI","category":"total","metric":"mae","value":2,"index":1},{"name":"0 Day GFS GHI","abbrev":"0 Day GFS GHI","category":"date","metric":"mae","value":2,"index":1546300800000},{"name":"0 Day GFS GHI","abbrev":"0 Day GFS GHI","category":"hour","metric":"mae","value":2,"index":1},{"name":"0 Day GFS GHI","abbrev":"0 Day GFS GHI","category":"total","metric":"rmse","value":2,"index":1},{"name":"0 Day GFS GHI","abbrev":"0 Day GFS GHI","category":"date","metric":"rmse","value":2,"index":1546300800000},{"name":"0 Day GFS GHI","abbrev":"0 Day GFS GHI","category":"hour","metric":"rmse","value":2,"index":1},{"name":"0 Day GFS GHI","abbrev":"0 Day GFS GHI","category":"total","metric":"mbe","value":2,"index":1},{"name":"0 Day GFS GHI","abbrev":"0 Day GFS GHI","category":"date","metric":"mbe","value":2,"index":1546300800000},{"name":"0 Day GFS GHI","abbrev":"0 Day GFS GHI","category":"hour","metric":"mbe","value":2,"index":1},{"name":"0 Day GFS GHI","abbrev":"0 Day GFS GHI","category":"total","metric":"s","value":2,"index":1},{"name":"0 Day GFS GHI","abbrev":"0 Day GFS GHI","category":"date","metric":"s","value":2,"index":1546300800000},{"name":"0 Day GFS GHI","abbrev":"0 Day GFS GHI","category":"hour","metric":"s","value":2,"index":1},{"name":"0 Day GFS GHI","abbrev":"0 Day GFS GHI","category":"total","metric":"cost","value":2,"index":1},{"name":"0 Day GFS GHI","abbrev":"0 Day GFS GHI","category":"date","metric":"cost","value":2,"index":1546300800000},{"name":"0 Day GFS GHI","abbrev":"0 Day GFS GHI","category":"hour","metric":"cost","value":2,"index":1},{"name":"Day Ahead GFS GHI","abbrev":"Day Ahe. GFS GHI","category":"total","metric":"mae","value":2,"index":1},{"name":"Day Ahead GFS GHI","abbrev":"Day Ahe. GFS GHI","category":"date","metric":"mae","value":2,"index":1546300800000},{"name":"Day Ahead GFS GHI","abbrev":"Day Ahe. GFS GHI","category":"hour","metric":"mae","value":2,"index":1},{"name":"Day Ahead GFS GHI","abbrev":"Day Ahe. GFS GHI","category":"total","metric":"rmse","value":2,"index":1},{"name":"Day Ahead GFS GHI","abbrev":"Day Ahe. GFS GHI","category":"date","metric":"rmse","value":2,"index":1546300800000},{"name":"Day Ahead GFS GHI","abbrev":"Day Ahe. GFS GHI","category":"hour","metric":"rmse","value":2,"index":1},{"name":"Day Ahead GFS GHI","abbrev":"Day Ahe. GFS GHI","category":"total","metric":"mbe","value":2,"index":1},{"name":"Day Ahead GFS GHI","abbrev":"Day Ahe. GFS GHI","category":"date","metric":"mbe","value":2,"index":1546300800000},{"name":"Day Ahead GFS GHI","abbrev":"Day Ahe. GFS GHI","category":"hour","metric":"mbe","value":2,"index":1},{"name":"Day Ahead GFS GHI","abbrev":"Day Ahe. GFS GHI","category":"total","metric":"s","value":2,"index":1},{"name":"Day Ahead GFS GHI","abbrev":"Day Ahe. GFS GHI","category":"date","metric":"s","value":2,"index":1546300800000},{"name":"Day Ahead GFS GHI","abbrev":"Day Ahe. GFS GHI","category":"hour","metric":"s","value":2,"index":1},{"name":"Day Ahead GFS GHI","abbrev":"Day Ahe. GFS GHI","category":"total","metric":"cost","value":2,"index":1},{"name":"Day Ahead GFS GHI","abbrev":"Day Ahe. GFS GHI","category":"date","metric":"cost","value":2,"index":1546300800000},{"name":"Day Ahead GFS GHI","abbrev":"Day Ahe. GFS GHI","category":"hour","metric":"cost","value":2,"index":1},{"name":"GHI Aggregate FX 60","abbrev":"GHI Agg. FX 60","category":"total","metric":"mae","value":2,"index":1},{"name":"GHI Aggregate FX 60","abbrev":"GHI Agg. FX 60","category":"date","metric":"mae","value":2,"index":1546300800000},{"name":"GHI Aggregate FX 60","abbrev":"GHI Agg. FX 60","category":"hour","metric":"mae","value":2,"index":1},{"name":"GHI Aggregate FX 60","abbrev":"GHI Agg. FX 60","category":"total","metric":"rmse","value":2,"index":1},{"name":"GHI Aggregate FX 60","abbrev":"GHI Agg. FX 60","category":"date","metric":"rmse","value":2,"index":1546300800000},{"name":"GHI Aggregate FX 60","abbrev":"GHI Agg. FX 60","category":"hour","metric":"rmse","value":2,"index":1},{"name":"GHI Aggregate FX 60","abbrev":"GHI Agg. FX 60","category":"total","metric":"mbe","value":2,"index":1},{"name":"GHI Aggregate FX 60","abbrev":"GHI Agg. FX 60","category":"date","metric":"mbe","value":2,"index":1546300800000},{"name":"GHI Aggregate FX 60","abbrev":"GHI Agg. FX 60","category":"hour","metric":"mbe","value":2,"index":1},{"name":"GHI Aggregate FX 60","abbrev":"GHI Agg. FX 60","category":"total","metric":"s","value":2,"index":1},{"name":"GHI Aggregate FX 60","abbrev":"GHI Agg. FX 60","category":"date","metric":"s","value":2,"index":1546300800000},{"name":"GHI Aggregate FX 60","abbrev":"GHI Agg. FX 60","category":"hour","metric":"s","value":2,"index":1},{"name":"GHI Aggregate FX 60","abbrev":"GHI Agg. FX 60","category":"total","metric":"cost","value":2,"index":1},{"name":"GHI Aggregate FX 60","abbrev":"GHI Agg. FX 60","category":"date","metric":"cost","value":2,"index":1546300800000},{"name":"GHI Aggregate FX 60","abbrev":"GHI Agg. FX 60","category":"hour","metric":"cost","value":2,"index":1}]"""  # NOQA
@@ -191,8 +191,8 @@ def test_get_template_and_kwargs(
     )
     base = kwargs.pop('base_template')
     kwargs.pop('report')
-    assert type(base) == jinja2.environment.Template
-    assert type(html_template) == jinja2.environment.Template
+    assert isinstance(base, jinja2.environment.Template)
+    assert isinstance(html_template, jinja2.environment.Template)
     assert kwargs == expected_kwargs(good_or_bad_report,
                                      with_series, False)
 
@@ -208,8 +208,8 @@ def test_get_template_and_kwargs_no_stats(
     )
     base = kwargs.pop('base_template')
     kwargs.pop('report')
-    assert type(base) == jinja2.environment.Template
-    assert type(html_template) == jinja2.environment.Template
+    assert isinstance(base, jinja2.environment.Template)
+    assert isinstance(html_template, jinja2.environment.Template)
     ek = expected_kwargs(no_stats_report,
                          with_series, False)
     ek['templating_messages'] = [

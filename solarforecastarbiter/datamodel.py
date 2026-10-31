@@ -1737,7 +1737,7 @@ def __check_plot_spec__(plot_spec):
 class ReportFigure(BaseModel):
     """Parent class for different types of Report Figures"""
     def __post_init__(self):
-        if type(self) == ReportFigure:
+        if type(self) is ReportFigure:
             raise ValueError("Invalid Report Figure. Figures must be of class "
                              "PlotlyReportFigure or BokehReportFigure.")
 

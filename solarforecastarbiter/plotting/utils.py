@@ -136,7 +136,7 @@ def percentiles_are_symmetric(constant_values):
     upper_bounds = [cv for cv in constant_values if cv > 50][::-1]
     if len(upper_bounds) != len(lower_bounds):
         return False
-    for l, u in zip(lower_bounds, upper_bounds):
-        if abs(50 - l) != abs(50 - u):
+    for lower, upper in zip(lower_bounds, upper_bounds):
+        if abs(50 - lower) != abs(50 - upper):
             return False
     return True

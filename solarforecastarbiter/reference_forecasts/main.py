@@ -768,7 +768,7 @@ def _pers_loop(session, fx, obs, index, data_start, data_end, issue_times):
         if len(serlist) > 0:
             ser = pd.concat(serlist)
             for cser in generate_continuous_chunks(ser, fx.interval_length):
-                if type(fx) == datamodel.Forecast:
+                if type(fx) is datamodel.Forecast:
                     session.post_forecast_values(id_, cser)
                 else:
                     session.post_probabilistic_forecast_constant_value_values(

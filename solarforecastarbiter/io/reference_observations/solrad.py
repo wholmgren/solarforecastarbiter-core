@@ -77,7 +77,8 @@ def fetch(api, site, start, end, realtime=False):
 
 
 def initialize_site_observations(api, site):
-    """Creates an observaiton at the site for each variable in solrad_variables.
+    """Creates an observation at the site for each variable in
+    solrad_variables.
 
     Parameters
     ----------

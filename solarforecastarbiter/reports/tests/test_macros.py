@@ -134,7 +134,7 @@ metric_table_fx_horz_format = """<table class="table table-striped" style="width
       </tr>
   </tbody>
 </table>
-"""
+"""  # noqa: E501
 
 
 def test_metric_table_fx_horz(report_with_raw, macro_test_template):
