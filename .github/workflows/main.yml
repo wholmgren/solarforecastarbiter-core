@@ -27,6 +27,24 @@ jobs:
       - name: Ruff
         run: uv run --locked --only-group lint ruff check --output-format=github
 
+  docs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          # setuptools-scm reads the version from git tags
+          fetch-depth: 0
+
+      - uses: astral-sh/setup-uv@v6
+        with:
+          enable-cache: true
+
+      - name: Install
+        run: uv sync --locked --all-extras --no-default-groups --group doc
+
+      - name: Sphinx
+        run: uv run --no-sync make -C docs html SPHINXOPTS="-W --keep-going"
+
   test:
     name: test (${{ matrix.resolution }})
     runs-on: ubuntu-latest

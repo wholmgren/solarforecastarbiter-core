@@ -67,7 +67,7 @@ test = [
     "requests-mock>=1.10",
 ]
 lint = ["ruff>=0.6"]
-doc = ["sphinx>=1.8, <2", "sphinx_rtd_theme>=0.4.3"]
+doc = ["sphinx>=8", "sphinx-rtd-theme>=3"]
 dev = [{include-group = "test"}, {include-group = "lint"}]
 
 [tool.setuptools.packages.find]
