@@ -1124,7 +1124,9 @@ class APISession(requests.Session):
         datamodel.Report
         """
         req = self.get(f'/reports/{report_id}')
-        resp = req.json()
+        # raw reports may contain bare NaN, which requests' JSON decoding
+        # rejects when simplejson is installed
+        resp = json.loads(req.text)
         raw = resp.pop('raw_report', None)
         report = self.process_report_dict(resp)
         if raw is not None:
@@ -1303,8 +1305,9 @@ class APISession(requests.Session):
             report_id, raw_report)
         raw_dict = raw_report.replace(
             processed_forecasts_observations=posted_fxobs).to_dict()
+        # requests' json= refuses NaN, which raw reports may contain
         self.post(f'/reports/{report_id}/raw',
-                  json=raw_dict,
+                  data=json.dumps(raw_dict),
                   headers={'Content-Type': 'application/json'})
         self.update_report_status(report_id, status)
 

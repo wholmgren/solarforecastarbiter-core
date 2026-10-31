@@ -644,16 +644,13 @@ def test_update_site_observations_gaps(
     assert mock_api.post_observation_values.call_count == 2
     kargs = mock_api.post_observation_values.call_args_list
     assert kargs[0][0][0] == ''
-    pd.testing.assert_frame_equal(
-        kargs[0][0][1], fake_ghi_data.rename(
-            columns={'ghi': 'value'})[
-                '2019-01-01T12:10Z':'2019-01-01T12:13Z'].resample(
-                    kargs[0][0][1].index.freq).first())
-    pd.testing.assert_frame_equal(
-        kargs[1][0][1], fake_ghi_data.rename(
-            columns={'ghi': 'value'})[
-                '2019-01-01T12:19Z':'2019-01-01T12:20Z'].resample(
-                    kargs[1][0][1].index.freq).first())
+    values = fake_ghi_data.rename(columns={'ghi': 'value'})
+    for (args, _), (first, last) in zip(kargs, [
+            ('2019-01-01T12:10Z', '2019-01-01T12:13Z'),
+            ('2019-01-01T12:19Z', '2019-01-01T12:20Z')]):
+        expected = values[pd.Timestamp(first):pd.Timestamp(last)]
+        pd.testing.assert_frame_equal(
+            args[1], expected.resample(args[1].index.freq).first())
 
 
 @pytest.fixture()

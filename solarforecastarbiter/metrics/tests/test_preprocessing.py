@@ -155,7 +155,7 @@ def test_align_fx_aggregate(single_forecast_aggregate):
                                   obs_values.index,
                                   check_categorical=False)
     pd.testing.assert_index_equal(obs_values.index,
-                                  THREE_HOURS,
+                                  THREE_HOURS.tz_convert('UTC'),
                                   check_categorical=False)
 
 
@@ -289,7 +289,7 @@ def test_align_with_ref(single_forecast_observation_reffx):
                                   ref_values.index,
                                   check_categorical=False)
     pd.testing.assert_index_equal(obs_values.index,
-                                  THREE_HOURS,
+                                  THREE_HOURS.tz_convert(tz),
                                   check_categorical=False)
 
 
@@ -312,7 +312,7 @@ def test_align_ref_less_fx(single_forecast_observation_reffx):
                                   ref_values.index,
                                   check_categorical=False)
     pd.testing.assert_index_equal(obs_values.index,
-                                  THREE_HOURS,
+                                  THREE_HOURS.tz_convert(tz),
                                   check_categorical=False)
 
 
@@ -384,7 +384,7 @@ def test_align_prob(prob_forecasts, single_observation):
                                   obs_values.index,
                                   check_categorical=False)
     pd.testing.assert_index_equal(obs_values.index,
-                                  THREE_HOURS,
+                                  THREE_HOURS.tz_convert(tz),
                                   check_categorical=False)
 
 
@@ -408,7 +408,7 @@ def test_align_prob_constant_value(
                                   obs_values.index,
                                   check_categorical=False)
     pd.testing.assert_index_equal(obs_values.index,
-                                  THREE_HOURS,
+                                  THREE_HOURS.tz_convert(tz),
                                   check_categorical=False)
 
 

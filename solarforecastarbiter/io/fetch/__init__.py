@@ -24,7 +24,7 @@ async def run_in_executor(func, *args, **kwargs):
     # apply the function on the pool of processes
     # inefficient, but ProcessPoolExecutor will not restart
     # processes in case of memory leak
-    res = await asyncio.get_event_loop().run_in_executor(
+    res = await asyncio.get_running_loop().run_in_executor(
         exc, partial(func, *args, **kwargs))
     return res
 

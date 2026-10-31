@@ -8,7 +8,7 @@ from bokeh.layouts import gridplot
 from bokeh.models import ColumnDataSource, Label, HoverTool
 from bokeh.plotting import figure
 from bokeh import palettes
-from matplotlib import cm
+from matplotlib import cm, colormaps
 from matplotlib.colors import Normalize
 import plotly.graph_objects as go
 import pandas as pd
@@ -363,7 +363,7 @@ def _plot_probabilsitic_distribution_axis_y(fig, forecast, data):
     forecast: :py:class`solarforecastarbiter.datamodel.ProbabilisticForecast`
     data: pd.DataFrame
     """
-    color_map = cm.get_cmap('viridis')
+    color_map = colormaps['viridis']
     color_scaler = cm.ScalarMappable(
         Normalize(vmin=0, vmax=1),
         color_map,

@@ -136,8 +136,10 @@ def fetch(api, site, start, end):
 
 
 def _read_data_file(f):
+    # some rows carry extra trailing fields; keep only the known columns
     data = pd.read_csv(
-        f, names=COLUMNS, dtype={'YEAR': str, 'DAY': str, 'HRMN': str}
+        f, names=COLUMNS, usecols=range(len(COLUMNS)),
+        dtype={'YEAR': str, 'DAY': str, 'HRMN': str}
     )
     date_strings = \
         data['YEAR'] + data['DAY'].str.zfill(3) + data['HRMN'].str.zfill(4)

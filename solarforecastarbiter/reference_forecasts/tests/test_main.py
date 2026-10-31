@@ -40,7 +40,7 @@ def test_run_nwp(model, site_powerplant_site_type, mocker):
     mocker.patch.object(inspect.unwrap(model), '__defaults__',
         (partial(load),))
     """
-    pytest.importorskip("aoihttp", reason="requires [fetch] packages")
+    pytest.importorskip("aiohttp", reason="requires [fetch] packages")
     mocker.patch.object(inspect.unwrap(model), '__defaults__',
                         (partial(nwp.load_forecast, base_path=BASE_PATH),))
     mocker.patch(
@@ -186,13 +186,13 @@ def test_run_persistence_interval_assert_data(
     assert isinstance(out, pd.Series)
     assert len(out) == 24
     if il == 'ending':
-        assert out.loc['20190103T0000Z'] == 1
-        assert out.loc['20190103T0100Z'] == 2
-        assert out.loc['20190103T0200Z'] == 0
+        assert out.loc[pd.Timestamp('20190103T0000Z')] == 1
+        assert out.loc[pd.Timestamp('20190103T0100Z')] == 2
+        assert out.loc[pd.Timestamp('20190103T0200Z')] == 0
     else:
-        assert out.loc['20190103T0000Z'] == 0
-        assert out.loc['20190103T0100Z'] == 1
-        assert out.loc['20190103T0200Z'] == 2
+        assert out.loc[pd.Timestamp('20190103T0000Z')] == 0
+        assert out.loc[pd.Timestamp('20190103T0100Z')] == 1
+        assert out.loc[pd.Timestamp('20190103T0200Z')] == 2
     assert main.persistence.persistence_interval.call_count == 1
 
 
@@ -217,9 +217,9 @@ def test_run_persistence_interval_two_day(
                                           pd.Timestamp('20190102T0000Z'))
     assert isinstance(out, pd.Series)
     assert len(out) == 24
-    assert out.loc['20190105T0000Z'] == 0
-    assert out.loc['20190105T0100Z'] == 1
-    assert out.loc['20190105T0200Z'] == 2
+    assert out.loc[pd.Timestamp('20190105T0000Z')] == 0
+    assert out.loc[pd.Timestamp('20190105T0100Z')] == 1
+    assert out.loc[pd.Timestamp('20190105T0200Z')] == 2
     assert main.persistence.persistence_interval.call_count == 1
 
 
@@ -267,9 +267,9 @@ def test_run_persistence_interval_tz(session, site_metadata, obs_5min_begin,
         # persistence interval moves endpoint into wrong interval
         # but alternative would require broader data start/end
         i = 5
-    assert out.loc[f'20190103T0{i}00Z'] == 1
-    assert out.loc[f'20190103T0{i+1}00Z'] == 2
-    assert out.loc[f'20190103T0{i+2}00Z'] == 0
+    assert out.loc[pd.Timestamp(f'20190103T0{i}00Z')] == 1
+    assert out.loc[pd.Timestamp(f'20190103T0{i+1}00Z')] == 2
+    assert out.loc[pd.Timestamp(f'20190103T0{i+2}00Z')] == 0
     assert out.iloc[-1] == 0
     assert main.persistence.persistence_interval.call_count == 1
 
@@ -299,9 +299,9 @@ def test_run_persistence_interval_dst(session, site_metadata, obs_5min_begin,
                                           pd.Timestamp('20200307T0300-05:00'))
     assert isinstance(out, pd.Series)
     assert len(out) == 24
-    assert out.loc['20200308T0500-04:00'] == 0
-    assert out.loc['20200308T0600-04:00'] == 1
-    assert out.loc['20200308T0700-04:00'] == 2
+    assert out.loc[pd.Timestamp('20200308T0500-04:00')] == 0
+    assert out.loc[pd.Timestamp('20200308T0600-04:00')] == 1
+    assert out.loc[pd.Timestamp('20200308T0700-04:00')] == 2
     assert main.persistence.persistence_interval.call_count == 1
 
 

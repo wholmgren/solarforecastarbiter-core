@@ -274,23 +274,25 @@ def fetchnwp(verbose, chunksize, once, use_tmp, netcdf_only, workers,
             logger.error('%s is not a valid directory with grib files',
                          path_to_files)
             sys.exit(1)
-        fut = asyncio.ensure_future(nwp.optimize_only(path_to_files, model))
+        coro = nwp.optimize_only(path_to_files, model)
     else:
         logger.info('Fetching NWP forecasts for %s', model)
-        fut = asyncio.ensure_future(nwp.run(basepath, model, chunksize,
-                                            once, use_tmp))
+        coro = nwp.run(basepath, model, chunksize, once, use_tmp)
 
-    loop = asyncio.get_event_loop()
+    async def main():
+        task = asyncio.create_task(coro)
+        loop = asyncio.get_running_loop()
 
-    def bail(ecode):
-        fut.cancel()
-        sys.exit(ecode)
+        def bail(ecode):
+            task.cancel()
+            sys.exit(ecode)
 
-    loop.add_signal_handler(signal.SIGUSR1, partial(bail, 1))
-    for sig in (signal.SIGINT, signal.SIGTERM):
-        loop.add_signal_handler(sig, partial(bail, 0))
+        loop.add_signal_handler(signal.SIGUSR1, partial(bail, 1))
+        for sig in (signal.SIGINT, signal.SIGTERM):
+            loop.add_signal_handler(sig, partial(bail, 0))
+        await task
 
-    loop.run_until_complete(fut)
+    asyncio.run(main())
 
 
 @cli.group(help="Make reference forecasts")

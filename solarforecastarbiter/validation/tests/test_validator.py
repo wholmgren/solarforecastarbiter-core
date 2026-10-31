@@ -11,7 +11,6 @@ from datetime import datetime
 import pytz
 import pytest
 from solarforecastarbiter.validation import validator
-import pvlib
 from pvlib.location import Location
 
 
@@ -393,12 +392,21 @@ def test_detect_interpolation():
 
 @pytest.fixture
 def ghi_clearsky():
+    # Ineichen clear-sky GHI at 35N, 110W from pvlib 0.10, stored so the
+    # expected flags don't change with pvlib's clear-sky model
     MST = pytz.timezone('Etc/GMT+7')
     dt = pd.date_range(start=datetime(2019, 4, 3, 5, 0, 0, tzinfo=MST),
                        periods=60, freq='15T')
-    loc = pvlib.location.Location(latitude=35, longitude=-110, tz=MST)
-    cs = loc.get_clearsky(dt)
-    return cs['ghi']
+    ghi = [
+        0.0, 0.0, 0.0, 0.0, 0.0, 2.257, 22.992, 62.447, 111.437, 164.835,
+        220.113, 275.887, 331.297, 385.744, 438.77, 490.0, 539.116, 585.839,
+        629.917, 671.124, 709.256, 744.127, 775.573, 803.445, 827.615, 847.97,
+        864.417, 876.882, 885.309, 889.659, 889.913, 886.07, 878.147, 866.181,
+        850.227, 830.358, 806.664, 779.256, 748.26, 713.824, 676.11, 635.301,
+        591.6, 545.231, 496.44, 445.504, 392.737, 338.502, 283.244, 227.538,
+        172.197, 118.504, 68.764, 27.595, 3.726, 0.0, 0.0, 0.0, 0.0, 0.0
+    ]
+    return pd.Series(ghi, index=dt, name='ghi')
 
 
 @pytest.fixture

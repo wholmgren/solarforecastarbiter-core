@@ -15,7 +15,7 @@ import pandas as pd
 from plotly import __version__ as plotly_version
 import plotly.graph_objects as go
 import numpy as np
-from matplotlib import cm
+from matplotlib import cm, colormaps
 from matplotlib.colors import Normalize
 
 from solarforecastarbiter import datamodel
@@ -512,7 +512,7 @@ def _plot_fx_distribution_timeseries(
         cv_metadata = cv_metadata.reset_index()
 
         # Get a colormap for mapping fill colors
-        color_map = cm.get_cmap(next(palette))
+        color_map = colormaps[next(palette)]
         color_scaler = cm.ScalarMappable(
             Normalize(vmin=0, vmax=1),
             color_map,
