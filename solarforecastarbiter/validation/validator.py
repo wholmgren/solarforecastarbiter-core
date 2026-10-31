@@ -897,10 +897,8 @@ def detect_clearsky_ghi(ghi, ghi_clearsky):
         scale_factor = window_length / 10
         index = pd.date_range(
             start=ghi.index[0], end=ghi.index[-1], freq=delta[1])
-        # pvlib pads its rolling statistics with NaN, which fails for
-        # integer input
-        adj_ghi = ghi.reindex(index).astype(float)
-        adj_ghi_clearsky = ghi_clearsky.reindex(index).astype(float)
+        adj_ghi = ghi.reindex(index)
+        adj_ghi_clearsky = ghi_clearsky.reindex(index)
         with warnings.catch_warnings():
             warnings.simplefilter("ignore")
             flags = _detect_clearsky(

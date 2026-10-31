@@ -109,7 +109,7 @@ def test_validate_mostly_clear(mocker, make_observation):
     index = pd.date_range(start='2019-04-01T11:00', freq='5min',
                           tz=obs.site.timezone, periods=11)
     data = pd.Series([742, 749, 756, 763, 769, 774, 779, 784, 789, 793, 700],
-                     index=index)
+                     index=index, dtype=float)
     # only care about night_func here, so index just needs to be right length
     # because mask is not used.
     night_func, _ = nighttime_func_mask(obs, data.index[:5])
