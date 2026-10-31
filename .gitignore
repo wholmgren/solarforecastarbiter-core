@@ -120,3 +120,6 @@ venv.bak/
 *.md
 
 *.csv
+
+# Written by setuptools-scm at build time
+solarforecastarbiter/_version.py

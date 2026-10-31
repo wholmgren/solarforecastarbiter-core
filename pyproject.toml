@@ -1,0 +1,75 @@
+[build-system]
+requires = ["setuptools>=77", "setuptools-scm>=8"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "solarforecastarbiter"
+description = "Core framework for Solar Forecast Arbiter"
+readme = "README.md"
+license = "MIT"
+license-files = ["LICENSE", "LICENSES/*"]
+authors = [
+    {name = "Solar Forecast Arbiter Team", email = "info@solarforecastarbiter.org"},
+]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Developers",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+]
+requires-python = ">=3.7, <4"
+dependencies = [
+    "click",
+    "netCDF4",
+    "numpy>=1.18.2",
+    "pandas>=1.0.3, <1.4",
+    "requests<=2.25.1",  # https://github.com/psf/requests/pull/5810
+    "xarray",
+    "tables",
+    "importlib-metadata<5",
+    "pvlib==0.8.0",
+    "scipy<1.9",
+    "statsmodels",
+    "jsonschema",
+    "pytz",
+]
+dynamic = ["version"]
+
+[project.optional-dependencies]
+test = [
+    "pytest",
+    "pytest-cov",
+    "pytest-mock",
+    "pytest-asyncio",
+    "asynctest",
+    "requests-mock",
+    "pytest-timeout",
+]
+fetch = ["aiohttp", "loky", "psutil"]
+log = ["sentry-sdk"]
+plotting = [
+    "bokeh>=1.4.0, <2",
+    "matplotlib",
+    "plotly>=4.9.0, <5",
+    "selenium<4",
+    "jinja2<3.1",
+    "kaleido",
+]
+doc = ["sphinx<2.0", "sphinx_rtd_theme"]
+all = ["solarforecastarbiter[test,fetch,log,plotting,doc]"]
+
+[project.urls]
+"Bug Reports" = "https://github.com/solararbiter/solarforecastarbiter-core/issues"
+Source = "https://github.com/solararbiter/solarforecastarbiter-core"
+Documentation = "https://solarforecastarbiter-core.readthedocs.io"
+
+[project.scripts]
+solararbiter = "solarforecastarbiter.cli:cli"
+
+[tool.setuptools.packages.find]
+include = ["solarforecastarbiter*"]
+
+[tool.setuptools_scm]
+version_file = "solarforecastarbiter/_version.py"

@@ -94,7 +94,7 @@ environment. See :ref:`installation` for instructions to set up and use
 an environment.
 
 To run the tests locally, install the ``test`` dependencies specified in the
-`setup.py <https://github.com/SolarArbiter/solarforecastarbiter-core/blob/master/setup.py>`_
+`pyproject.toml <https://github.com/SolarArbiter/solarforecastarbiter-core/blob/master/pyproject.toml>`_
 file. The unit tests may be run using::
 
   pytest solarforecastarbiter
