@@ -136,7 +136,8 @@ def fetch(api, site, start, end):
 
 
 def _read_data_file(f):
-    # some rows carry extra trailing fields; keep only the known columns
+    # The last line of a day (HRMN 2359) appends the daily summary
+    # columns. pandas<1.4 silently dropped them; newer pandas raises.
     data = pd.read_csv(
         f, names=COLUMNS, usecols=range(len(COLUMNS)),
         dtype={'YEAR': str, 'DAY': str, 'HRMN': str}
