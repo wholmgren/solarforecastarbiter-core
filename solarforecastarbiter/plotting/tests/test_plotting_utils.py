@@ -4,7 +4,7 @@ import pytest
 
 pytest.importorskip("matplotlib", reason="requires [plotting] packages")  # noqa: E401,E501
 
-from matplotlib import cm
+from matplotlib import cm, colormaps
 from matplotlib.colors import Normalize
 from solarforecastarbiter.plotting import utils
 
@@ -78,7 +78,7 @@ def test_line_or_step_plotly(label):
     assert isinstance(out, dict)
 
 
-color_map = cm.get_cmap('viridis')
+color_map = colormaps['viridis']
 color_scaler = cm.ScalarMappable(
     Normalize(vmin=0, vmax=1),
     color_map,

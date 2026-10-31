@@ -332,6 +332,7 @@ def no_stray_phantomjs():  # pragma: no cover
         return pjs
 
     if platform.system() != 'Linux':
+        yield
         return
     before = get_phantom_pid()
     yield

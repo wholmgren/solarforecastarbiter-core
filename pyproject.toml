@@ -15,22 +15,19 @@ classifiers = [
     "Development Status :: 5 - Production/Stable",
     "Intended Audience :: Developers",
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.7",
-    "Programming Language :: Python :: 3.8",
-    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.11",
 ]
-requires-python = ">=3.7, <4"
+requires-python = ">=3.11"
 dependencies = [
     "click",
     "netCDF4",
-    "numpy>=1.18.2",
-    "pandas>=1.0.3, <1.4",
-    "requests<=2.25.1",  # https://github.com/psf/requests/pull/5810
+    "numpy>=1.26, <2",
+    "pandas>=1.5, <2",
+    "requests",
     "xarray",
     "tables",
-    "importlib-metadata<5",
-    "pvlib==0.8.0",
-    "scipy<1.9",
+    "pvlib>=0.10",
+    "scipy>=1.11",
     "statsmodels",
     "jsonschema",
     "pytz",
@@ -43,19 +40,18 @@ test = [
     "pytest-cov",
     "pytest-mock",
     "pytest-asyncio",
-    "asynctest",
     "requests-mock",
     "pytest-timeout",
 ]
-fetch = ["aiohttp", "loky", "psutil"]
+fetch = ["aiohttp", "loky"]
 log = ["sentry-sdk"]
 plotting = [
-    "bokeh>=1.4.0, <2",
-    "matplotlib",
-    "plotly>=4.9.0, <5",
+    "bokeh>=2.4, <3",
+    "matplotlib>=3.6",
+    "plotly>=5, <6",
     "selenium<4",
-    "jinja2<3.1",
-    "kaleido",
+    "jinja2",
+    "kaleido<0.3",
 ]
 doc = ["sphinx<2.0", "sphinx_rtd_theme"]
 all = ["solarforecastarbiter[test,fetch,log,plotting,doc]"]

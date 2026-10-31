@@ -1,12 +1,12 @@
 from pathlib import Path
 import shutil
+from unittest.mock import AsyncMock, MagicMock
 
 import pytest
 
-pytest.importorskip("aoihttp", reason="requires [fetch] packages")  # noqa:E402
+pytest.importorskip("aiohttp", reason="requires [fetch] packages")  # noqa:E402
 
 import aiohttp
-from asynctest import CoroutineMock, MagicMock
 import pandas as pd
 
 from solarforecastarbiter.io.fetch import nwp
@@ -25,7 +25,7 @@ def test_nam_valid_hr_gen():
 
 @pytest.mark.asyncio
 async def test_get_with_retries(mock_sleep):
-    getfcn = CoroutineMock()
+    getfcn = AsyncMock()
     getfcn.side_effect = [
         aiohttp.ClientResponseError(MagicMock(), MagicMock())] * 4 + ['hi']
     res = await nwp.get_with_retries(getfcn, retries=5)
@@ -35,7 +35,7 @@ async def test_get_with_retries(mock_sleep):
 
 @pytest.mark.asyncio
 async def test_get_with_retries_fails(mock_sleep):
-    getfcn = CoroutineMock()
+    getfcn = AsyncMock()
     getfcn.side_effect = [
         aiohttp.ClientResponseError(MagicMock(), MagicMock())] * 4 + ['hi']
     with pytest.raises(aiohttp.ClientResponseError):
@@ -55,7 +55,7 @@ async def test_get_with_retries_fails(mock_sleep):
 ])
 async def test_get_available_dirs(mocker, page, expected, model):
     get = mocker.patch('solarforecastarbiter.io.fetch.nwp.get_with_retries',
-                       new=CoroutineMock())
+                       new=AsyncMock())
     get.return_value = page
     assert await nwp.get_available_dirs(None, model) == set(expected)
 
@@ -101,7 +101,7 @@ async def test_check_next_inittime_raises(mocker):
 @pytest.fixture()
 def mock_sleep(mocker):
     sleep = mocker.patch('solarforecastarbiter.io.fetch.nwp.asyncio.sleep',
-                         new=CoroutineMock())
+                         new=AsyncMock())
     sleep.return_value = None
 
 
@@ -137,7 +137,7 @@ async def test_files_to_retrieve_ends_after_no_new(mocker, mock_sleep):
     session.head.return_value.__aenter__.side_effect = headers
     checknext = mocker.patch(
             'solarforecastarbiter.io.fetch.nwp.check_next_inittime',
-            new=CoroutineMock())
+            new=AsyncMock())
     checknext.return_value = False
 
     params = [p async for p in nwp.files_to_retrieve(session, model, Path('/'),
@@ -170,7 +170,7 @@ async def test_files_to_retrieve_cut_short(mocker, mock_sleep):
     session.head.return_value.__aenter__.side_effect = headers
     checknext = mocker.patch(
             'solarforecastarbiter.io.fetch.nwp.check_next_inittime',
-            new=CoroutineMock())
+            new=AsyncMock())
     checknext.return_value = True
     params = [p async for p in nwp.files_to_retrieve(session, model, Path('/'),
                                                      init)]
@@ -182,7 +182,7 @@ async def test_sleep_until_inittime(mocker):
     m = {'delay_to_first_forecast': '30s'}
     inittime = pd.Timestamp.utcnow()
     sleep = mocker.patch('solarforecastarbiter.io.fetch.nwp.asyncio.sleep',
-                         new=CoroutineMock())
+                         new=AsyncMock())
 
     await nwp.sleep_until_inittime(inittime, m)
     assert sleep.mock_calls[0]
@@ -191,12 +191,12 @@ async def test_sleep_until_inittime(mocker):
 @pytest.mark.asyncio
 async def test_startup_find_next_runtime(mocker, tmp_path):
     mocker.patch('solarforecastarbiter.io.fetch.nwp.get_available_dirs',
-                 new=CoroutineMock(return_value=['20190409',
-                                                 '2019041000',
-                                                 '2019041006',
-                                                 '2019041012']))
+                 new=AsyncMock(return_value=['20190409',
+                                             '2019041000',
+                                             '2019041006',
+                                             '2019041012']))
     mocker.patch('solarforecastarbiter.io.fetch.nwp.sleep_until_inittime',
-                 new=CoroutineMock())
+                 new=AsyncMock())
     model = {'update_freq': '6h', 'filename': 'file.nc'}
     withnc = ['2019/04/09/00', '2019/04/09/06', '2019/04/09/12',
               '2019/04/09/18', '2019/04/10/00', '2019/04/10/12']
@@ -212,12 +212,12 @@ async def test_startup_find_next_runtime(mocker, tmp_path):
 @pytest.mark.asyncio
 async def test_startup_find_next_runtime_all_there(mocker, tmp_path):
     mocker.patch('solarforecastarbiter.io.fetch.nwp.get_available_dirs',
-                 new=CoroutineMock(return_value=['20190409',
-                                                 '2019041000',
-                                                 '2019041006',
-                                                 '2019041012']))
+                 new=AsyncMock(return_value=['20190409',
+                                             '2019041000',
+                                             '2019041006',
+                                             '2019041012']))
     mocker.patch('solarforecastarbiter.io.fetch.nwp.sleep_until_inittime',
-                 new=CoroutineMock())
+                 new=AsyncMock())
     model = {'update_freq': '6h', 'filename': 'file.nc'}
     withnc = ['2019/04/09/00', '2019/04/09/06', '2019/04/09/12',
               '2019/04/09/18', '2019/04/10/00', '2019/04/10/06',
@@ -235,12 +235,12 @@ async def test_startup_find_next_runtime_all_there(mocker, tmp_path):
 async def test_startup_find_next_runtime_all_there_out_of_order(
         mocker, tmp_path):
     mocker.patch('solarforecastarbiter.io.fetch.nwp.get_available_dirs',
-                 new=CoroutineMock(return_value=['20190409',
-                                                 '2019041006',
-                                                 '2019041012',
-                                                 '2019041000']))
+                 new=AsyncMock(return_value=['20190409',
+                                             '2019041006',
+                                             '2019041012',
+                                             '2019041000']))
     mocker.patch('solarforecastarbiter.io.fetch.nwp.sleep_until_inittime',
-                 new=CoroutineMock())
+                 new=AsyncMock())
     model = {'update_freq': '6h', 'filename': 'file.nc'}
     withnc = ['2019/04/09/00', '2019/04/09/06', '2019/04/09/12',
               '2019/04/10/00', '2019/04/10/06', '2019/04/09/18',
@@ -258,7 +258,7 @@ async def test_startup_find_next_runtime_all_there_out_of_order(
 async def test_next_run_time(mocker, tmp_path):
     model = {'update_freq': '12h', 'filename': 'file.nc'}
     mocker.patch('solarforecastarbiter.io.fetch.nwp.sleep_until_inittime',
-                 new=CoroutineMock())
+                 new=AsyncMock())
     init = pd.Timestamp('20190409T0000Z')
     withnc = ['2019/04/09/00', '2019/04/09/12',
               '2019/04/10/12']

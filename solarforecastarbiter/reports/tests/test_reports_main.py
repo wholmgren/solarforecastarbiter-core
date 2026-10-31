@@ -1,3 +1,4 @@
+import json
 from pathlib import Path
 import re
 import uuid
@@ -250,7 +251,7 @@ def test_capture_report_failure(mocker):
     failwrap = main.capture_report_failure('report_id', session)
     with pytest.raises(TypeError):
         failwrap(fail)()
-    assert 'Critical ' in api_post.call_args_list[0][1]['json']['messages'][0]['message']  # NOQA
+    assert 'Critical ' in json.loads(api_post.call_args_list[0][1]['data'])['messages'][0]['message']  # NOQA
     assert api_post.call_args_list[1][0][0] == '/reports/report_id/status/failed'  # NOQA
 
 
@@ -264,7 +265,8 @@ def test_capture_report_failure_is_valid_datamodel(mocker):
     failwrap = main.capture_report_failure('report_id', session)
     with pytest.raises(TypeError):
         failwrap(fail)()
-    raw = datamodel.RawReport.from_dict(api_post.call_args_list[0][1]['json'])
+    raw = datamodel.RawReport.from_dict(
+        json.loads(api_post.call_args_list[0][1]['data']))
     assert 'CRITICAL' == raw.messages[0].level
 
 
@@ -279,7 +281,7 @@ def test_capture_report_failure_msg(mocker):
     err_msg = 'Super bad error message'
     with pytest.raises(TypeError):
         failwrap(fail, err_msg=err_msg)()
-    assert api_post.call_args_list[0][1]['json']['messages'][0]['message'] == err_msg  # NOQA
+    assert json.loads(api_post.call_args_list[0][1]['data'])['messages'][0]['message'] == err_msg  # NOQA
     assert api_post.call_args_list[1][0][0] == '/reports/report_id/status/failed'  # NOQA
 
 

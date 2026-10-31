@@ -8,7 +8,7 @@ from pandas.testing import assert_series_equal
 import pytest
 import numpy as np
 from numpy.testing import assert_allclose
-from scipy.stats import PearsonRConstantInputWarning
+from scipy.stats import ConstantInputWarning
 
 
 from solarforecastarbiter import datamodel
@@ -159,9 +159,9 @@ def test_r(obs, fx, value):
 
     # obs or fx have the same values
     (np.array([1, 1, 1]), np.array([1, 2, 3]),
-     pytest.warns(PearsonRConstantInputWarning)),
+     pytest.warns(ConstantInputWarning)),
     (np.array([1, 2, 3]), np.array([1, 1, 1]),
-     pytest.warns(PearsonRConstantInputWarning)),
+     pytest.warns(ConstantInputWarning)),
 ])
 def test_r_nan(obs, fx, context):
     with context:
@@ -196,11 +196,11 @@ def test_crmse(obs, fx, value):
     (np.array([-2, 2]), np.array([3, -3]), 2.0615528128088303,
      does_not_raise()),
     (np.array([1, 1]), np.array([2, 3]), np.nan,
-     pytest.warns(PearsonRConstantInputWarning)),  # corr = nan
+     pytest.warns(ConstantInputWarning)),  # corr = nan
     (np.array([2, 3]), np.array([1, 1]), np.nan,
-     pytest.warns(PearsonRConstantInputWarning)),  # corr = nan
+     pytest.warns(ConstantInputWarning)),  # corr = nan
     (np.array([0, 0]), np.array([1, 2]), np.nan,
-     pytest.warns(PearsonRConstantInputWarning)),  # corr = nan
+     pytest.warns(ConstantInputWarning)),  # corr = nan
 ])
 def test_relative_euclidean_distance(obs, fx, value, context):
     with context:

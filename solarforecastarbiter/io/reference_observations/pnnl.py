@@ -136,8 +136,11 @@ def fetch(api, site, start, end):
 
 
 def _read_data_file(f):
+    # The last line of a day (HRMN 2359) appends the daily summary
+    # columns. pandas<1.4 silently dropped them; newer pandas raises.
     data = pd.read_csv(
-        f, names=COLUMNS, dtype={'YEAR': str, 'DAY': str, 'HRMN': str}
+        f, names=COLUMNS, usecols=range(len(COLUMNS)),
+        dtype={'YEAR': str, 'DAY': str, 'HRMN': str}
     )
     date_strings = \
         data['YEAR'] + data['DAY'].str.zfill(3) + data['HRMN'].str.zfill(4)

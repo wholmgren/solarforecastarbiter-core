@@ -32,7 +32,7 @@ The recommended way to install the package for development is as follows.
 First, fork and clone the repository to your machine. From within the
 root level of the repository, execute the follow shell commands::
 
-    conda create -n sfacore python=3.7
+    conda create -n sfacore python=3.11
     conda activate sfacore
     pip install -r requirements.txt -r requirements-test.txt
     pip install -e .

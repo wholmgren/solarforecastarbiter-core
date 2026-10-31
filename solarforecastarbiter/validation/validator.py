@@ -902,7 +902,8 @@ def detect_clearsky_ghi(ghi, ghi_clearsky):
         with warnings.catch_warnings():
             warnings.simplefilter("ignore")
             flags = _detect_clearsky(
-                adj_ghi, adj_ghi_clearsky, adj_ghi.index, window_length,
+                adj_ghi, adj_ghi_clearsky, adj_ghi.index,
+                window_length=window_length,
                 lower_line_length=-5*scale_factor,
                 upper_line_length=10*scale_factor,
                 slope_dev=8*scale_factor
