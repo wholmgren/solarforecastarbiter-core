@@ -21,7 +21,7 @@ mappings for an example.
 
 import json
 import logging
-from pkg_resources import resource_filename, Requirement
+from pathlib import Path
 
 
 from requests.exceptions import HTTPError
@@ -65,9 +65,7 @@ NETWORK_OPTIONS = ['NOAA SURFRAD', 'NOAA SOLRAD', 'NOAA USCRN', 'NREL MIDC',
                    'UO SRML', 'DOE RTC', 'DOE ARM', 'NREL PVDAQ', 'EIA',
                    'WRMC BSRN', 'PNNL']
 
-DEFAULT_SITEFILE = resource_filename(
-    Requirement.parse('solarforecastarbiter'),
-    'solarforecastarbiter/io/reference_observations/sfa_reference_sites.csv')
+DEFAULT_SITEFILE = str(Path(__file__).parent / 'sfa_reference_sites.csv')
 
 
 logger = logging.getLogger('reference_data')

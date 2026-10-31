@@ -8,7 +8,6 @@ pytest.importorskip("aoihttp", reason="requires [fetch] packages")  # noqa:E402
 import aiohttp
 from asynctest import CoroutineMock, MagicMock
 import pandas as pd
-from pkg_resources import resource_filename, Requirement
 
 from solarforecastarbiter.io.fetch import nwp
 
@@ -277,9 +276,7 @@ async def test_optimize_only(mocker, tmp_path):
         pytest.skip('wgrib2 must be on the PATH to run this test')
     grib_dir = tmp_path / 'grib'
     shutil.copytree(
-        resource_filename(
-            Requirement.parse('solarforecastarbiter'),
-            'solarforecastarbiter/io/fetch/tests/data/grib'),
+        Path(__file__).parent / 'data' / 'grib',
         grib_dir)
 
     async def run(func, *args, **kwargs):
