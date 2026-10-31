@@ -51,9 +51,9 @@ def get_issue_times(forecast, start_from):
     possible_times = pd.DatetimeIndex(possible_times).tz_convert(
         start_from.tz).drop_duplicates()
     # then slice the broad range based on start_from day
-    startloc = possible_times.get_loc(start_from.floor('1d'), method='bfill')
-    endloc = possible_times.get_loc(
-        (start_from + pd.Timedelta('1d')).floor('1d'), method='bfill') + 1
+    startloc = possible_times.searchsorted(start_from.floor('1d'))
+    endloc = possible_times.searchsorted(
+        (start_from + pd.Timedelta('1d')).floor('1d')) + 1
     return list(possible_times[startloc:endloc])
 
 

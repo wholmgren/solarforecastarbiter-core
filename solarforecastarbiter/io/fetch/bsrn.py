@@ -182,7 +182,7 @@ def read_bsrn_from_nasa_larc(start, end):
     # concat raises exception on empty list. maybe better to let that bubble up
     if len(month_data):
         bsrn_data = pd.concat(month_data)
-        return bsrn_data[start:end]
+        return bsrn_data.loc[start:end]
     else:
         # not sure how we get here in practice
         return pd.DataFrame()  # pragma: no cover

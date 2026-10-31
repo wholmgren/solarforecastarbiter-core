@@ -23,7 +23,7 @@ EMPTY_TIMESERIES = pd.Series([], name='value', index=pd.DatetimeIndex(
 
 EMPTY_DATAFRAME = pd.DataFrame(dtype=float)
 EMPTY_TIME_DATAFRAME = pd.DataFrame([], index=pd.DatetimeIndex(
-    [], name='timestamp', tz='UTC'), dtype=float)
+    [], name='timestamp', tz='UTC'), columns=[], dtype=float)
 TEST_DATAFRAME = pd.DataFrame({
     '25.0': [0.0, 1, 2, 3, 4, 5],
     '50.0': [1.0, 2, 3, 4, 5, 6],

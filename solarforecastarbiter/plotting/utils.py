@@ -32,7 +32,7 @@ def align_index(df, interval_length, limit=None):
     period_end = df.index[-1]
     if limit is not None:
         period_start = df.index[
-            df.index.get_loc(period_end - limit, method='bfill')]
+            df.index.searchsorted(period_end - limit)]
     else:
         period_start = df.index[0]
     # align the data on the index it should have according to the metadata

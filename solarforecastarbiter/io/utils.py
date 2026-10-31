@@ -102,7 +102,7 @@ def _json_to_dataframe(json_payload):
     else:
         df = pd.DataFrame.from_dict(json_payload['values'])
         df.index = pd.to_datetime(df['timestamp'], utc=True,
-                                  infer_datetime_format=True)
+                                  format='ISO8601')
     return df
 
 

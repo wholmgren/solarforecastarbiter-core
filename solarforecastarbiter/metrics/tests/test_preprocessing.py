@@ -207,7 +207,7 @@ def test_filter_resample_interval_label(site_metadata, label_obs, label_fx,
         freq=length_obs,
         tz='UTC',
         name='timestamp',
-        closed=datamodel.CLOSED_MAPPING[label_obs]
+        inclusive=datamodel.CLOSED_MAPPING[label_obs] or 'both'
     )
     ts_fx = pd.date_range(
         start='2019-03-31T12:00:00',
@@ -215,7 +215,7 @@ def test_filter_resample_interval_label(site_metadata, label_obs, label_fx,
         freq=length_fx,
         tz='UTC',
         name='timestamp',
-        closed=datamodel.CLOSED_MAPPING[label_fx]
+        inclusive=datamodel.CLOSED_MAPPING[label_fx] or 'both'
     )
     obs_series = pd.Series(1., index=ts_obs)
     obs_data = pd.DataFrame({'value': obs_series, 'quality_flag': 2})
@@ -1430,7 +1430,8 @@ def test_apply_fill(method, single_forecast):
     dt_range = pd.date_range(start='2020-01-01T00:00',
                              periods=n+1,  # because ending is skipped
                              freq=freq,
-                             closed=datamodel.CLOSED_MAPPING[label],
+                             inclusive=(datamodel.CLOSED_MAPPING[label]
+                                        or 'both'),
                              name='timestamp')
     data = pd.Series([1]*n, index=dt_range, dtype=float)
     i_rand = (np.append(0., np.round(np.random.rand(n-1))) == 1)
@@ -1563,7 +1564,8 @@ def test_apply_fill_drop(input, exp, n_pre, n_post, single_forecast):
     dt_range = pd.date_range(start='2020-01-01T00:00',
                              periods=n+1,
                              freq='30min',
-                             closed=datamodel.CLOSED_MAPPING[label],
+                             inclusive=(datamodel.CLOSED_MAPPING[label]
+                                        or 'both'),
                              name='timestamp')
     dt_range.freq = None
     data = pd.Series(input, index=dt_range[n_pre:n-n_post], dtype=float)

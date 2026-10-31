@@ -83,7 +83,7 @@ def persistence_scalar(observation, data_start, data_end, forecast_start,
     persistence_quantity = obs.mean()
     closed = datamodel.CLOSED_MAPPING[interval_label]
     fx_index = pd.date_range(start=forecast_start, end=forecast_end,
-                             freq=interval_length, closed=closed)
+                             freq=interval_length, inclusive=closed or 'both')
     fx = pd.Series(persistence_quantity, index=fx_index)
     return fx
 
@@ -167,7 +167,7 @@ def persistence_interval(observation, data_start, data_end, forecast_start,
     obs = load_data(observation, data_start, data_end)
     obs_index = pd.date_range(start=data_start, end=data_end,
                               freq=observation.interval_length,
-                              closed=closed_obs)
+                              inclusive=closed_obs or 'both')
     # put in nans if appropriate
     obs = obs.reindex(obs_index)
     # average data within bins of length interval_length
@@ -179,7 +179,7 @@ def persistence_interval(observation, data_start, data_end, forecast_start,
     # Make the forecast time index.
     closed = datamodel.CLOSED_MAPPING[interval_label]
     fx_index = pd.date_range(start=forecast_start, end=forecast_end,
-                             freq=interval_length, closed=closed)
+                             freq=interval_length, inclusive=closed or 'both')
 
     # Construct the returned series.
     # Use values to strip the time information from resampled obs.
@@ -271,7 +271,7 @@ def persistence_scalar_index(observation, data_start, data_end, forecast_start,
     else:
         freq = pd.Timedelta('1min')
     obs_range = pd.date_range(start=data_start, end=data_end, freq=freq,
-                              closed=closed)
+                              inclusive=closed or 'both')
     solar_position_obs = calc_solpos(obs_range)
     clearsky_obs = calc_cs(solar_position_obs['apparent_zenith'])
 
@@ -280,7 +280,7 @@ def persistence_scalar_index(observation, data_start, data_end, forecast_start,
     # Later, modeled clear sky or ac power will be resampled to interval_length
     closed_fx = datamodel.CLOSED_MAPPING[interval_label]
     fx_range = pd.date_range(start=forecast_start, end=forecast_end, freq=freq,
-                             closed=closed_fx)
+                             inclusive=closed_fx or 'both')
     solar_position_fx = calc_solpos(fx_range)
     clearsky_fx = calc_cs(solar_position_fx['apparent_zenith'])
 
@@ -474,7 +474,7 @@ def persistence_probabilistic(observation, data_start, data_end,
     """
     closed = datamodel.CLOSED_MAPPING[interval_label]
     fx_index = pd.date_range(start=forecast_start, end=forecast_end,
-                             freq=interval_length, closed=closed)
+                             freq=interval_length, inclusive=closed or 'both')
 
     # observation data resampled to match forecast sampling
     obs = load_data(observation, data_start, data_end)
@@ -588,7 +588,8 @@ def persistence_probabilistic_timeofday(observation, data_start, data_end,
     closed_obs = datamodel.CLOSED_MAPPING[observation.interval_label]
     closed_fx = datamodel.CLOSED_MAPPING[interval_label]
     fx_index = pd.date_range(start=forecast_start, end=forecast_end,
-                             freq=interval_length, closed=closed_fx)
+                             freq=interval_length,
+                             inclusive=closed_fx or 'both')
 
     # get observations from database
     obs_db = load_data(observation, data_start, data_end)

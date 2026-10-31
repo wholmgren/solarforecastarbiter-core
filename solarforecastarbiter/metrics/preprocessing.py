@@ -52,7 +52,7 @@ def apply_fill(fx_data, forecast, forecast_fill_method, start, end):
     # Create full datetime range at resolution
     full_dt_index = pd.date_range(
         start=start, end=end, freq=forecast.interval_length,
-        closed=datamodel.CLOSED_MAPPING[forecast.interval_label],
+        inclusive=datamodel.CLOSED_MAPPING[forecast.interval_label] or 'both',
         name=fx_data.index.name)
 
     if forecast_fill_method == 'drop':
@@ -141,10 +141,10 @@ def _resample_event_obs(
 
     # determine the points that should never contribute
     # combine unique elements of tuple of tuples
-    discard_before_resample_flags = set(['ISNAN'])
+    discard_before_resample_flags = {'ISNAN'}
     for f in filter(lambda x: x.discard_before_resample, quality_flags):
         discard_before_resample_flags |= set(f.quality_flags)
-    discard_before_resample = obs_flags[discard_before_resample_flags]
+    discard_before_resample = obs_flags[sorted(discard_before_resample_flags)]
     to_discard_before_resample = discard_before_resample.any(axis=1)
     obs_resampled = obs_data.loc[~to_discard_before_resample, 'value']
 
@@ -1040,7 +1040,7 @@ def forecast_report_issue_times(
         first_issue_time,
         end.tz_convert('UTC') - forecast.lead_time_to_start,
         freq=forecast.run_length,
-        closed="left"
+        inclusive='left'
     )
     return issue_times
 

@@ -157,7 +157,7 @@ def reindex_fill_slice(arg, freq='5min', label=None, start=None, end=None,
     else:
         end_reindex = max(pd.Timestamp(end), arg.index[-1])
     index = pd.date_range(start=start_reindex, end=end_reindex, freq=freq,
-                          closed=label)
+                          inclusive=label or 'both')
     reindexed = arg.reindex(index)
     filled = getattr(reindexed, fill_method)()
     sliced = filled.loc[start_slice:end_slice].bfill().ffill()

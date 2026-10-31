@@ -280,7 +280,8 @@ def convert_mask_into_dataframe(flag_series):
        flags in the series.
     """
     vers = get_version(flag_series)
-    fundamental_masks = flag_series.groupby(vers, sort=False).apply(
+    fundamental_masks = flag_series.groupby(
+        vers, sort=False, group_keys=False).apply(
         _convert_version_mask).fillna(False)
     out = _add_derived_masks(fundamental_masks)
     return out

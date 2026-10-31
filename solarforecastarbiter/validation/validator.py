@@ -614,8 +614,7 @@ def check_day_night_interval(
     # if not provided, try to interval length for normalization.
     # this will raise if the index has gaps.
     if solar_zenith_interval_length is None:
-        solar_zenith_interval_length = pd.infer_freq(
-            solar_zenith.index, warn=False)
+        solar_zenith_interval_length = pd.infer_freq(solar_zenith.index)
         if solar_zenith_interval_length is None:
             raise ValueError(
                 'solar_zenith.index contains gaps so the freq could not be '

@@ -58,7 +58,7 @@ def test_read_bsrn_from_nasa_larc(start, end, ncalls, mocker):
     start, end = pd.Timestamp(start, tz='UTC'), pd.Timestamp(end, tz='UTC')
     m = mocker.patch(
         'solarforecastarbiter.io.fetch.bsrn.read_bsrn_month_from_nasa_larc')
-    m.return_value = pd.DataFrame()
+    m.return_value = pd.DataFrame(index=pd.DatetimeIndex([], tz='UTC'))
     out = bsrn.read_bsrn_from_nasa_larc(start, end)
     assert m.call_count == ncalls
     assert isinstance(out, pd.DataFrame)

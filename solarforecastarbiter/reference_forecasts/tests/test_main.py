@@ -80,7 +80,7 @@ def observation_values_text():
     tz = 'UTC'
     # long enough date range to create data for prob pers time of day
     data_index = pd.date_range(
-        start='20181202', end='20190112', freq='5min', tz=tz, closed='left')
+        start='20181202', end='20190112', freq='5min', tz=tz, inclusive='left')
     # each element of data is equal to the hour value of its label
     data = pd.DataFrame({'value': data_index.hour, 'quality_flag': 0},
                         index=data_index)
