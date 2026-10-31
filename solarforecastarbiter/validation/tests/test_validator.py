@@ -392,8 +392,9 @@ def test_detect_interpolation():
 
 @pytest.fixture
 def ghi_clearsky():
-    # Ineichen clear-sky GHI at 35N, 110W from pvlib 0.10, stored so the
-    # expected flags don't change with pvlib's clear-sky model
+    # Ineichen clear-sky GHI at 35N, 110W, altitude 0 m, from pvlib 0.10.
+    # Stored so the expected flags don't follow pvlib changes: since 0.11,
+    # Location looks up a default altitude (1594 m here) instead of 0 m.
     MST = pytz.timezone('Etc/GMT+7')
     dt = pd.date_range(start=datetime(2019, 4, 3, 5, 0, 0, tzinfo=MST),
                        periods=60, freq='15T')
