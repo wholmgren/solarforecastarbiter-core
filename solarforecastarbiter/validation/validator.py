@@ -774,12 +774,15 @@ def detect_levels(x, count=3, num_bins=100):
     -------
     levels : list of tuples
         (left, right) values of the interval in x with a detected plateau, in
-        decreasing order of count of x values in the interval. List length is
+        decreasing order of count of x values in the interval. Intervals with
+        equal counts are ordered from highest to lowest value. List length is
         given by the kwarg count
     """
     nonan = x[~np.isnan(x)]
     hist, bin_edges = np.histogram(nonan, bins=num_bins, density=True)
-    level_index = np.argsort(hist * -1)  # decreasing order
+    # decreasing count, then decreasing value. argsort alone is unstable, so
+    # ties came out in an order that depended on the platform's sort
+    level_index = np.lexsort((-bin_edges[:-1], -hist))
     levels = [(bin_edges[i], bin_edges[i + 1]) for i in level_index[:count]]
     return levels, bin_edges
 

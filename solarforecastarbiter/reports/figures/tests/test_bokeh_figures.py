@@ -366,6 +366,10 @@ def test_output_svg_no_phantom(mocker):
     pytest.importorskip('selenium')
     mocker.patch('selenium.webdriver.PhantomJS',
                  side_effect=RuntimeError)
+    # without PhantomJS, bokeh falls back to a Chrome or Firefox driver if
+    # one is installed, as on GitHub's runners
+    mocker.patch('bokeh.io.webdriver.webdriver_control.get',
+                 side_effect=RuntimeError)
     logger = mocker.patch(
         'solarforecastarbiter.reports.figures.bokeh_figures.logger')
     from bokeh.plotting import figure
