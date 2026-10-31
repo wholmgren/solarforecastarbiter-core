@@ -70,7 +70,7 @@ def check_network(networks, metadata):
         True if the site belongs to the network, or one of the
         networks.
     """
-    if type(networks) == str:
+    if isinstance(networks, str):
         networks = [networks]
     try:
         extra_params = decode_extra_parameters(metadata)

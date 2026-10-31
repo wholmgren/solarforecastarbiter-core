@@ -94,8 +94,8 @@ def list_arm_filenames(user_id, api_key, datastream, start, end):
 
 
 def request_arm_file(user_id, api_key, filename, retries=5):
-    """Get a file from ARM live in the form of a stream so that the python netCDF4
-    module can read it.
+    """Get a file from ARM live in the form of a stream so that the python
+    netCDF4 module can read it.
 
     Parameters
     ----------

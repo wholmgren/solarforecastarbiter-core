@@ -188,7 +188,9 @@ def critical_success_index(obs, fx):
 def event_bias(obs, fx):
     """Event Bias (EBIAS).
 
-    .. math:: \\text{EBIAS} = (\\text{TP} + \\text{FP}) / (\\text{TP} + \\text{FN})  # NOQA
+    .. math::
+
+        \\text{EBIAS} = (\\text{TP} + \\text{FP}) / (\\text{TP} + \\text{FN})
 
     Parameters
     ----------

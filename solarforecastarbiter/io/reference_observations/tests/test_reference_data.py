@@ -93,7 +93,7 @@ def test_update_reference_observations_gaps(mocker, mock_api, log, start, end,
 
 site_csv = """interval_length,name,latitude,longitude,elevation,network_api_id,network_api_abbreviation,timezone,attribution,network
 1,Seattle UW WA,47.653999999999996,-122.309,70,94291.0,ST,Etc/GMT+8,,UO SRML
-1,UO Solar Awning Eugene OR,44.05,-123.07,150,94255.0,AW,Etc/GMT+8,,UO SRML"""
+1,UO Solar Awning Eugene OR,44.05,-123.07,150,94255.0,AW,Etc/GMT+8,,UO SRML"""  # noqa: E501
 csv_dicts = [
     {'name': 'Seattle UW WA',
      'latitude': 47.654,

@@ -1,14 +1,13 @@
 import datetime as dt
 import json
 
-import pytest
-
-bokeh = pytest.importorskip("bokeh", reason="requires [plotting] packages")  # noqa: E401,E501
-
 import numpy as np
 import pandas as pd
+import pytest
 
-from solarforecastarbiter.plotting import timeseries
+bokeh = pytest.importorskip("bokeh", reason="requires [plotting] packages")  # noqa: E501
+
+from solarforecastarbiter.plotting import timeseries  # noqa: E402
 
 
 @pytest.mark.parametrize('times,exp', [

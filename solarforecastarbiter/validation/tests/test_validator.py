@@ -421,6 +421,13 @@ def ghi_clipped(ghi_clearsky):
     return ghi_clipped
 
 
+def test_detect_levels_ties():
+    x = pd.Series([0, 100, -100, 100, 300, 300, 300, 300, 100, 0, 100, 0, 0],
+                  dtype=float)
+    levels, _ = validator.detect_levels(x, count=2, num_bins=200)
+    assert [round(left) for left, right in levels] == [298, 100]
+
+
 def test_detect_clipping(ghi_clipped):
     placeholder = pd.Series(index=ghi_clipped.index, data=False)
     expected = placeholder.copy()

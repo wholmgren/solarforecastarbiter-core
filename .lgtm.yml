@@ -1,5 +1,0 @@
-path_classifiers:
-    generated:
-        - solarforecastarbiter/_version.py
-    library:
-        - versioneer.py

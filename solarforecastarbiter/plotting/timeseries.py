@@ -491,7 +491,7 @@ def generate_probabilistic_forecast_figure(
     else:
         ylabel = plot_utils.format_variable_name(forecast.variable)
         _plot_probabilsitic_distribution_axis_y(fig, forecast, data)
-    fig.update_xaxes(title_text=f'Time (UTC)', showgrid=True,
+    fig.update_xaxes(title_text='Time (UTC)', showgrid=True,
                      gridwidth=1, gridcolor='#CCC', showline=True,
                      linewidth=1, linecolor='black', ticks='outside')
     fig.update_yaxes(title_text=ylabel, showgrid=True,
