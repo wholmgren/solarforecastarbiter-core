@@ -77,10 +77,12 @@ Documentation must be written in
 using the `Sphinx Napoleon extension
 <https://www.sphinx-doc.org/en/master/usage/extensions/napoleon.html>`_.
 
-To build the docs locally, install the dependencies specified in the
-`docs/requirements.txt <https://github.com/SolarArbiter/solarforecastarbiter-core/blob/master/docs/requirements.txt>`_
-file. After installing the dependencies, run ``make -C docs html`` from
-the root of the repository.
+To build the docs locally, run this from the root of the repository::
+
+  uv run --group doc make -C docs html
+
+The pages are written to ``docs/build/html``. CI builds the docs with
+warnings treated as errors.
 
 Testing
 -------

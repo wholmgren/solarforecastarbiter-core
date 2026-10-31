@@ -6,20 +6,7 @@
 # full list see the documentation:
 # http://www.sphinx-doc.org/en/master/config
 
-# -- Path setup --------------------------------------------------------------
-
-# If extensions (or modules to document with autodoc) are in another directory,
-# add these directories to sys.path here. If the directory is relative to the
-# documentation root, use os.path.abspath to make it absolute, like shown here.
-#
-import os
-import sys
-sys.path.insert(0, os.path.abspath('../../'))
-
-import pandas as pd
 import solarforecastarbiter
-
-pd.show_versions()
 
 
 # -- Project information -----------------------------------------------------
@@ -61,9 +48,6 @@ import pandas as pd
 
 napoleon_use_rtype = False  # group rtype on same line together with return
 
-# Add any paths that contain templates here, relative to this directory.
-templates_path = ['_templates']
-
 # The suffix(es) of source filenames.
 # You can specify multiple suffix as a list of string:
 #
@@ -78,7 +62,7 @@ master_doc = 'index'
 #
 # This is also used if you do content translation via gettext catalogs.
 # Usually you set "language" from the command line for these cases.
-language = None
+language = 'en'
 
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
@@ -104,10 +88,6 @@ html_theme = 'sphinx_rtd_theme'
 #
 # html_theme_options = {}
 
-# Add any paths that contain custom static files (such as style sheets) here,
-# relative to this directory. They are copied after the builtin static files,
-# so a file named "default.css" will overwrite the builtin "default.css".
-html_static_path = ['_static']
 
 # Custom sidebar templates, must be a dictionary that maps document names
 # to template names.
@@ -204,17 +184,17 @@ epub_exclude_files = ['search.html']
 extlinks = {
     'issue': (
         'https://github.com/solararbiter/solarforecastarbiter-core/issues/%s',
-        'GH'),
+        'GH%s'),
     'pull': (
         'https://github.com/solararbiter/solarforecastarbiter-core/pull/%s',
-        'GH'),
+        'GH%s'),
     'wiki': (
         'https://github.com/solararbiter/solarforecastarbiter-core/wiki/%s',
-        'wiki '),
-    'doi': ('http://dx.doi.org/%s', 'DOI: '),
-    'ghuser': ('https://github.com/%s', '@')}
+        'wiki %s'),
+    'doi': ('https://doi.org/%s', 'DOI: %s'),
+    'ghuser': ('https://github.com/%s', '@%s')}
 
 # -- Options for intersphinx extension ---------------------------------------
 
 # Example configuration for intersphinx: refer to the Python standard library.
-intersphinx_mapping = {'https://docs.python.org/': None}
+intersphinx_mapping = {'python': ('https://docs.python.org/3', None)}
