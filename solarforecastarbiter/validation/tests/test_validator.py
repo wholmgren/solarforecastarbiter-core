@@ -251,7 +251,7 @@ def test_check_day_night():
 def test_check_day_night_interval(closed, solar_zenith, expected):
     interval_length = pd.Timedelta('1h')
     index = pd.date_range(
-        start='20200917 0000', end='20200917 0200', inclusive=closed or 'both',
+        start='20200917 0000', end='20200917 0200', inclusive=closed,
         freq='5min')
     solar_zenith = pd.Series(solar_zenith, index=index)
     result = validator.check_day_night_interval(
@@ -277,10 +277,10 @@ def test_check_day_night_interval_irregular():
     solar_zenith_interval_length = pd.Timedelta('5min')
     closed = 'left'
     index1 = pd.date_range(
-        start='20200917 0000', end='20200917 0100', inclusive=closed or 'both',
+        start='20200917 0000', end='20200917 0100', inclusive=closed,
         freq=solar_zenith_interval_length)
     index2 = pd.date_range(
-        start='20200917 0200', end='20200917 0300', inclusive=closed or 'both',
+        start='20200917 0200', end='20200917 0300', inclusive=closed,
         freq=solar_zenith_interval_length)
     index = index1.union(index2)
     solar_zenith = pd.Series([89]*11 + [80]*13, index=index)

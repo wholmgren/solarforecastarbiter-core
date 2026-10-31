@@ -52,7 +52,7 @@ def apply_fill(fx_data, forecast, forecast_fill_method, start, end):
     # Create full datetime range at resolution
     full_dt_index = pd.date_range(
         start=start, end=end, freq=forecast.interval_length,
-        inclusive=datamodel.CLOSED_MAPPING[forecast.interval_label] or 'both',
+        inclusive=datamodel.INCLUSIVE_MAPPING[forecast.interval_label],
         name=fx_data.index.name)
 
     if forecast_fill_method == 'drop':
