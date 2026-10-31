@@ -33,8 +33,7 @@ def _validate_stale_interpolated(observation, values):
 # 3. _solpos_night_resample for interval average observations
 
 def _solpos_night(observation, values):
-    closed = datamodel.CLOSED_MAPPING[observation.interval_label]
-    if closed is None:
+    if observation.interval_label in ('instant', 'event'):
         return _solpos_night_instantaneous(observation, values)
     else:
         return _solpos_night_resample(observation, values)

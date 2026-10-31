@@ -266,8 +266,7 @@ def persistence_scalar_index(observation, data_start, data_end, forecast_start,
     # else (if data is interval average), calculate at 1 minute resolution to
     # reduce errors from changing solar position during persistence data range.
     # Later, modeled clear sky or ac power will be averaged over the data range
-    closed = datamodel.CLOSED_MAPPING[observation.interval_label]
-    if closed is None:
+    if observation.interval_label in ('instant', 'event'):
         freq = observation.interval_length
     else:
         freq = pd.Timedelta('1min')
@@ -313,6 +312,7 @@ def persistence_scalar_index(observation, data_start, data_end, forecast_start,
         clear_fx = clearsky_fx[observation.variable]
 
     # resample sub-interval reference clear sky to observation intervals
+    closed = datamodel.CLOSED_MAPPING[observation.interval_label]
     clear_ref_resampled = clear_ref.resample(
         observation.interval_length, closed=closed, label=closed).mean()
     # calculate persistence index (clear sky index or ac power index)
