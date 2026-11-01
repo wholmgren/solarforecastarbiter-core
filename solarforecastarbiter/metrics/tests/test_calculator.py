@@ -936,8 +936,8 @@ def test_calculate_probabilistic_metrics_from_df(categories, df, metrics,
 
 @pytest.mark.filterwarnings('ignore::RuntimeWarning')
 @pytest.mark.parametrize('metric,fx,obs,ref_fx,norm,dead,expect', [
-    ('mae', [], [], None, None, None, np.NaN),
-    ('mae', [], [], None, None, 1, np.NaN),
+    ('mae', [], [], None, None, None, np.nan),
+    ('mae', [], [], None, None, 1, np.nan),
     ('mae', [1, 1, 1], [0, 1, -1], None, None, None, 1.0),
     ('mae', [0, 1, 4], [1, 1, 1], None, None, 100, 1.),
     ('mbe', [1, 1, 1], [0, 1, -1], None, None, None, 1.0),
@@ -1003,7 +1003,7 @@ def test_apply_deterministic_bad_metric_func():
 
 @pytest.mark.filterwarnings('ignore::RuntimeWarning')
 @pytest.mark.parametrize('metric,fx,fx_prob,obs,ref_fx,ref_fx_prob,expect', [
-    ('bs', [], [], [], None, None, np.NaN),
+    ('bs', [], [], [], None, None, np.nan),
     ('bs', [1, 1, 1], [100, 100, 100], [1, 1, 1], None, None, 0.),
 
     # Brier Skill Score with no reference

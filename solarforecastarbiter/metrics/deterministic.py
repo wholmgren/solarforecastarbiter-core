@@ -305,7 +305,7 @@ def forecast_skill(obs, fx, ref, error_fnc=error):
     elif rmse_ref == 0.:
         # avoid divide by 0.
         # typically caused by deadbands and short time periods
-        return np.NINF
+        return -np.inf
     else:
         return 1.0 - rmse_fx / rmse_ref
 
@@ -412,7 +412,7 @@ def _careful_ratio(obs_stat, fx_stat):
     if obs_stat == fx_stat:
         ratio = 1.
     elif obs_stat == 0.:
-        ratio = np.Inf
+        ratio = np.inf
     else:
         ratio = fx_stat / obs_stat
     return ratio
@@ -458,13 +458,13 @@ def relative_euclidean_distance(obs, fx):
     2.0
     # observation mean is 0, forecast mean is not 0. d --> inf
     >>> relative_euclidean_distance(np.array([-1, 1]), np.array([2, 3]))
-    np.Inf
+    np.inf
     # both forecast and observation mean are 0. d is finite
     >>> relative_euclidean_distance(np.array([-2, 2]), np.array([3, -3]))
     2.0615528128088303
     # variance of observation or forecast is 0. d --> nan
     >>> relative_euclidean_distance(np.array([1, 1]), np.array([2, 3])
-    np.NaN
+    np.nan
 
     References
     ----------

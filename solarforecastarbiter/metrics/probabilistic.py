@@ -1,6 +1,7 @@
 """Probablistic forecast error metrics."""
 
 import numpy as np
+from scipy.integrate import trapezoid
 
 
 def brier_score(obs, fx, fx_prob):
@@ -217,7 +218,7 @@ def quantile_skill_score(obs, fx, fx_prob, ref, ref_prob):
     elif qs_ref == 0.0:
         # avoid divide by 0
         # typically caused by deadbands and short time periods
-        return np.NINF
+        return -np.inf
     else:
         return 1.0 - qs_fx / qs_ref
 
@@ -567,7 +568,7 @@ def continuous_ranked_probability_score(obs, fx, fx_prob):
     f = fx_prob / 100.0
 
     # integrate along each sample, then average all samples
-    crps = np.mean(np.trapz((f - o) ** 2, x=fx, axis=1))
+    crps = np.mean(trapezoid((f - o) ** 2, x=fx, axis=1))
 
     return crps
 
@@ -618,7 +619,7 @@ def crps_skill_score(obs, fx, fx_prob, ref, ref_prob):
             return 0.0
         elif crps_ref == 0.0:
             # avoid divide by zero
-            return np.NINF
+            return -np.inf
         else:
             return 1 - crps_fx / crps_ref
 

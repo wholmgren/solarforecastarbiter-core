@@ -456,7 +456,7 @@ def test_post_observation_data_HTTPError(
 def test_post_observation_data_all_nans(
         mock_api, log, fake_ghi_data, start, end):
     nan_data = fake_ghi_data.copy()
-    nan_data['ghi'] = np.NaN
+    nan_data['ghi'] = np.nan
     ret = common.post_observation_data(mock_api, site_test_observation,
                                        nan_data, start, end)
     # post the nans

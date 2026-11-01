@@ -130,7 +130,7 @@ def test_nrmse(obs, fx, norm, value):
 
 
 @pytest.mark.parametrize("obs,fx,ref,value", [
-    (np.array([0, 1]), np.array([0, 2]), np.array([0, 1]), np.NINF),
+    (np.array([0, 1]), np.array([0, 2]), np.array([0, 1]), -np.inf),
     (np.array([0, 1]), np.array([0, 1]), np.array([0, 1]), 0.0),
     (np.array([0, 1]), np.array([0, 2]), np.array([0, 2]), 0.0),
     (np.array([0, 1]), np.array([0, 2]), np.array([0, 3]), 0.5),
@@ -192,7 +192,7 @@ def test_crmse(obs, fx, value):
     (np.array([0, 1]), np.array([0, 1]), 0.0, does_not_raise()),
     (np.array([0, 1]), np.array([1, 2]), 2.0, does_not_raise()),
     (np.array([1, 2]), np.array([0, 1]), 0.6666666666666667, does_not_raise()),
-    (np.array([-1, 1]), np.array([2, 3]), np.Inf, does_not_raise()),
+    (np.array([-1, 1]), np.array([2, 3]), np.inf, does_not_raise()),
     (np.array([-2, 2]), np.array([3, -3]), 2.0615528128088303,
      does_not_raise()),
     (np.array([1, 1]), np.array([2, 3]), np.nan,
