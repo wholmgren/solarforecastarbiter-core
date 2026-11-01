@@ -64,7 +64,7 @@ def test_quantile_score(obs, fx, fx_prob, value):
     (2, 1, 80, 10, 80, 1 - 0.2 / 6.4),
     (2, 3, 80, 10, 80, 1 - 0.8 / 6.4),
     (2, 3, 80, 100, 100, 1 - 0.8 / 98),
-    (4, 5, 50, 4, 100, np.NINF),
+    (4, 5, 50, 4, 100, -np.inf),
 ])
 def test_quantile_skill_score(obs, fx, fx_prob, ref, ref_prob, value):
     assert prob.quantile_skill_score(obs, fx, fx_prob, ref, ref_prob) == value
