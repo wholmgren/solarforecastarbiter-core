@@ -74,6 +74,14 @@ CLOSED_MAPPING = {
     'beginning': 'left',
     'ending': 'right'
 }
+# pd.date_range(inclusive=...) for each interval label. Instantaneous
+# labels keep both endpoints.
+INCLUSIVE_MAPPING = {
+    'event': 'both',
+    'instant': 'both',
+    'beginning': 'left',
+    'ending': 'right'
+}
 ALLOWED_INTERVAL_LABELS = tuple(CLOSED_MAPPING.keys())
 ALLOWED_INTERVAL_VALUE_TYPES = (
     'interval_mean', 'interval_max', 'interval_min', 'interval_median',

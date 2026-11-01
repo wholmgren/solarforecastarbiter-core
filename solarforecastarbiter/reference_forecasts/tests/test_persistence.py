@@ -37,12 +37,12 @@ def powerplant_metadata():
     return metadata
 
 
-@pytest.mark.parametrize('interval_label,closed,end', [
+@pytest.mark.parametrize('interval_label,inclusive,end', [
     ('beginning', 'left', '20190404 1400'),
     ('ending', 'right', '20190404 1400'),
-    ('instant', None, '20190404 1359')
+    ('instant', 'both', '20190404 1359')
 ])
-def test_persistence_scalar(site_metadata, interval_label, closed, end):
+def test_persistence_scalar(site_metadata, interval_label, inclusive, end):
     # interval beginning obs
     observation = default_observation(
         site_metadata, interval_length='5min', interval_label=interval_label)
@@ -64,20 +64,20 @@ def test_persistence_scalar(site_metadata, interval_label, closed, end):
 
     expected_index = pd.date_range(
         start='20190404 1300', end=end, freq='5min', tz=tz,
-        closed=closed)
+        inclusive=inclusive)
     expected = pd.Series(100., index=expected_index)
     assert_series_equal(fx, expected)
 
 
 @pytest.mark.parametrize('obs_interval_label', ('beginning', 'ending',
                                                 'instant'))
-@pytest.mark.parametrize('interval_label,closed,end', [
+@pytest.mark.parametrize('interval_label,inclusive,end', [
     ('beginning', 'left', '20190406 0000'),
     ('ending', 'right', '20190406 0000'),
-    ('instant', None, '20190405 2359')
+    ('instant', 'both', '20190405 2359')
 ])
 def test_persistence_interval(site_metadata, obs_interval_label,
-                              interval_label, closed, end):
+                              interval_label, inclusive, end):
     # interval beginning obs
     observation = default_observation(
         site_metadata, interval_length='5min',
@@ -98,7 +98,8 @@ def test_persistence_interval(site_metadata, obs_interval_label,
     load_data = partial(load_data_base, data)
 
     expected_index = pd.date_range(
-        start='20190405 0000', end=end, freq='60min', tz=tz, closed=closed)
+        start='20190405 0000', end=end, freq='60min', tz=tz,
+        inclusive=inclusive)
     expected_vals = list(range(0, 24))
     expected = pd.Series(expected_vals, index=expected_index, dtype=float)
 
@@ -137,7 +138,7 @@ def test_persistence_interval_missing_data(site_metadata):
     load_data = partial(load_data_base, data)
 
     expected_index = pd.date_range(
-        start='20190405 0000', end=end, freq='60min', tz=tz, closed='right')
+        start='20190405 0000', end=end, freq='60min', tz=tz, inclusive='right')
     expected_vals = [None] * 12 + list(range(12, 24))
     expected = pd.Series(expected_vals, index=expected_index, dtype=float)
     fx = persistence.persistence_interval(
@@ -352,7 +353,7 @@ def test_persistence_scalar_index_low_solar_elevation(
     data_start = pd.Timestamp('20190513 1200', tz=tz)
     data_end = pd.Timestamp('20190513 1230', tz=tz)
     index = pd.date_range(start=data_start, end=data_end,
-                          freq='5min', closed='left')
+                          freq='5min', inclusive='left')
 
     # clear sky 5 min avg (from 1 min avg) GHI is
     # [0., 0.10932908, 1.29732454, 4.67585122, 10.86548521, 19.83487399]
@@ -368,7 +369,7 @@ def test_persistence_scalar_index_low_solar_elevation(
     load_data = partial(load_data_base, data)
 
     expected_index = pd.date_range(
-        start=forecast_start, end=forecast_end, freq='5min', closed='left')
+        start=forecast_start, end=forecast_end, freq='5min', inclusive='left')
 
     # clear sky 5 min avg GHI is
     # [31.2, 44.5, 59.4, 75.4, 92.4, 110.1]
@@ -378,13 +379,13 @@ def test_persistence_scalar_index_low_solar_elevation(
     fx = persistence.persistence_scalar_index(
         observation, data_start, data_end, forecast_start, forecast_end,
         interval_length, interval_label, load_data)
-    assert_series_equal(fx, expected, check_less_precise=1, check_names=False)
+    assert_series_equal(fx, expected, rtol=5e-2, check_names=False)
 
     expected = pd.Series([0.2, 0.7, 1.2, 1.6, 2., 2.5], index=expected_index)
     fx = persistence.persistence_scalar_index(
         observation_ac, data_start, data_end, forecast_start, forecast_end,
         interval_length, interval_label, load_data)
-    assert_series_equal(fx, expected, check_less_precise=1, check_names=False)
+    assert_series_equal(fx, expected, rtol=5e-2, check_names=False)
 
 
 @pytest.mark.parametrize("interval_label", [
@@ -416,9 +417,9 @@ def test_persistence_probabilistic(site_metadata, interval_label, obs_values,
 
     data_start = pd.Timestamp('20190513 1200', tz=tz)
     data_end = pd.Timestamp('20190513 1230', tz=tz)
-    closed = datamodel.CLOSED_MAPPING[interval_label]
+    inclusive = datamodel.INCLUSIVE_MAPPING[interval_label]
     index = pd.date_range(start=data_start, end=data_end, freq='5min',
-                          closed=closed)
+                          inclusive=inclusive)
 
     data = pd.Series(obs_values, index=index, dtype=float)
     forecast_start = pd.Timestamp('20190513 1230', tz=tz)
@@ -427,7 +428,8 @@ def test_persistence_probabilistic(site_metadata, interval_label, obs_values,
     load_data = partial(load_data_base, data)
 
     expected_index = pd.date_range(start=forecast_start, end=forecast_end,
-                                   freq=interval_length, closed=closed)
+                                   freq=interval_length,
+                                   inclusive=inclusive)
 
     forecasts = persistence.persistence_probabilistic(
         observation, data_start, data_end, forecast_start, forecast_end,
@@ -481,9 +483,9 @@ def test_persistence_probabilistic_timeofday(site_metadata, obs_values, axis,
     # all observations at 9am each day
     data_end = pd.Timestamp('20190513T0900', tz=tz)
     data_start = data_end - pd.Timedelta("{}D".format(len(obs_values)))
-    closed = datamodel.CLOSED_MAPPING[interval_label]
+    inclusive = datamodel.INCLUSIVE_MAPPING[interval_label]
     index = pd.date_range(start=data_start, end=data_end, freq='1D',
-                          closed=closed)
+                          inclusive=inclusive)
     data = pd.Series(obs_values, index=index, dtype=float)
 
     # forecast 9am
@@ -494,7 +496,8 @@ def test_persistence_probabilistic_timeofday(site_metadata, obs_values, axis,
     load_data = partial(load_data_base, data)
 
     expected_index = pd.date_range(start=forecast_start, end=forecast_end,
-                                   freq=interval_length, closed=closed)
+                                   freq=interval_length,
+                                   inclusive=inclusive)
 
     forecasts = persistence.persistence_probabilistic_timeofday(
         observation, data_start, data_end, forecast_start, forecast_end,
@@ -555,9 +558,9 @@ def test_persistence_probabilistic_timeofday_timezone(site_metadata, data_end,
 
     # all observations at 9am each day
     data_start = data_end - pd.Timedelta("{}D".format(len(obs_values)))
-    closed = datamodel.CLOSED_MAPPING[interval_label]
+    inclusive = datamodel.INCLUSIVE_MAPPING[interval_label]
     index = pd.date_range(start=data_start, end=data_end, freq='1D',
-                          closed=closed)
+                          inclusive=inclusive)
     data = pd.Series(obs_values, index=index, dtype=float)
 
     # forecast 9am
@@ -567,7 +570,8 @@ def test_persistence_probabilistic_timeofday_timezone(site_metadata, data_end,
     load_data = partial(load_data_base, data)
 
     expected_index = pd.date_range(start=forecast_start, end=forecast_end,
-                                   freq=interval_length, closed=closed)
+                                   freq=interval_length,
+                                   inclusive=inclusive)
 
     # if forecast without timezone, then use obs timezone
     if data.index.tzinfo is not None and forecast_start.tzinfo is None:
@@ -622,9 +626,9 @@ def test_persistence_probabilistic_resampling(
 
     data_start = pd.Timestamp('20190513 1200', tz=tz)
     data_end = pd.Timestamp('20190513 1230', tz=tz)
-    closed = datamodel.CLOSED_MAPPING[interval_label]
+    inclusive = datamodel.INCLUSIVE_MAPPING[interval_label]
     index = pd.date_range(start=data_start, end=data_end, freq='1min',
-                          closed=closed)
+                          inclusive=inclusive)
 
     data = pd.Series(obs_values, index=index, dtype=float)
     forecast_start = pd.Timestamp('20190513 1230', tz=tz)
@@ -633,7 +637,8 @@ def test_persistence_probabilistic_resampling(
     load_data = partial(load_data_base, data)
 
     expected_index = pd.date_range(start=forecast_start, end=forecast_end,
-                                   freq=interval_length, closed=closed)
+                                   freq=interval_length,
+                                   inclusive=inclusive)
 
     forecasts = persistence.persistence_probabilistic(
         observation, data_start, data_end, forecast_start, forecast_end,
@@ -841,7 +846,7 @@ def test_persistence_probabilistic_no_data(
 
     data_start = pd.Timestamp('20190513 1200', tz=tz)
     data_end = pd.Timestamp('20190513 1230', tz=tz)
-    closed = datamodel.CLOSED_MAPPING[interval_label]
+    inclusive = datamodel.INCLUSIVE_MAPPING[interval_label]
 
     data = pd.Series([], index=pd.DatetimeIndex([], tz=tz), dtype=float)
     forecast_start = pd.Timestamp('20190513 1230', tz=tz)
@@ -850,7 +855,8 @@ def test_persistence_probabilistic_no_data(
     load_data = partial(load_data_base, data)
 
     expected_index = pd.date_range(start=forecast_start, end=forecast_end,
-                                   freq=interval_length, closed=closed)
+                                   freq=interval_length,
+                                   inclusive=inclusive)
 
     forecasts = persistence.persistence_probabilistic(
         observation, data_start, data_end, forecast_start, forecast_end,

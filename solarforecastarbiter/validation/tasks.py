@@ -1,5 +1,4 @@
 import logging
-import warnings
 
 import numpy as np
 import pandas as pd
@@ -34,8 +33,7 @@ def _validate_stale_interpolated(observation, values):
 # 3. _solpos_night_resample for interval average observations
 
 def _solpos_night(observation, values):
-    closed = datamodel.CLOSED_MAPPING[observation.interval_label]
-    if closed is None:
+    if observation.interval_label in ('instant', 'event'):
         return _solpos_night_instantaneous(observation, values)
     else:
         return _solpos_night_resample(observation, values)
@@ -60,7 +58,7 @@ def _resample_date_range(interval_length, closed, freq, values):
     else:
         raise ValueError("closed must be left or right")  # pragma: no cover
     obs_range = pd.date_range(start=data_start, end=data_end, freq=freq,
-                              closed=closed)
+                              inclusive=closed)
     return obs_range
 
 
@@ -703,10 +701,8 @@ def _group_continuous_week_post(session, observation, observation_values):
     # make series of week + year integers to further
     # split data to post at most one week at a time
     # ~10,000 pts of 1min data
-    with warnings.catch_warnings():
-        # https://github.com/SolarArbiter/solarforecastarbiter-core/issues/685
-        warnings.simplefilter("ignore", category=FutureWarning)
-        week_int = (gid.index.week + gid.index.year).values
+    week_int = (gid.index.isocalendar().week.to_numpy(dtype=int)
+                + gid.index.year.to_numpy())
     # combine the continuous groups with groups of weeks
     # gid is unique for each group since week_int and cumsum
     # increase monotonically and are positive

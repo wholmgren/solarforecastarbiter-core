@@ -450,7 +450,7 @@ def _process_single_group(session, run_for, group, run_time):
     except FileNotFoundError as e:
         logger.error('Could not process group of %s, %s', run_for, str(e))
         return
-    for fx_id, fx in group['forecast'].iteritems():
+    for fx_id, fx in group['forecast'].items():
         fx_vals = getattr(nwp_result, fx.variable)
         if fx_vals is None:
             logger.warning('No forecast produced for %s in group with %s',

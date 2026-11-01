@@ -81,9 +81,9 @@ def persistence_scalar(observation, data_start, data_end, forecast_start,
     """
     obs = load_data(observation, data_start, data_end)
     persistence_quantity = obs.mean()
-    closed = datamodel.CLOSED_MAPPING[interval_label]
+    inclusive = datamodel.INCLUSIVE_MAPPING[interval_label]
     fx_index = pd.date_range(start=forecast_start, end=forecast_end,
-                             freq=interval_length, closed=closed)
+                             freq=interval_length, inclusive=inclusive)
     fx = pd.Series(persistence_quantity, index=fx_index)
     return fx
 
@@ -163,11 +163,12 @@ def persistence_interval(observation, data_start, data_end, forecast_start,
                            observation.interval_length)
 
     closed_obs = datamodel.CLOSED_MAPPING[observation.interval_label]
+    inclusive_obs = datamodel.INCLUSIVE_MAPPING[observation.interval_label]
     # get the data
     obs = load_data(observation, data_start, data_end)
     obs_index = pd.date_range(start=data_start, end=data_end,
                               freq=observation.interval_length,
-                              closed=closed_obs)
+                              inclusive=inclusive_obs)
     # put in nans if appropriate
     obs = obs.reindex(obs_index)
     # average data within bins of length interval_length
@@ -177,9 +178,9 @@ def persistence_interval(observation, data_start, data_end, forecast_start,
                                         closed=closed_obs).mean()
 
     # Make the forecast time index.
-    closed = datamodel.CLOSED_MAPPING[interval_label]
+    inclusive = datamodel.INCLUSIVE_MAPPING[interval_label]
     fx_index = pd.date_range(start=forecast_start, end=forecast_end,
-                             freq=interval_length, closed=closed)
+                             freq=interval_length, inclusive=inclusive)
 
     # Construct the returned series.
     # Use values to strip the time information from resampled obs.
@@ -265,13 +266,13 @@ def persistence_scalar_index(observation, data_start, data_end, forecast_start,
     # else (if data is interval average), calculate at 1 minute resolution to
     # reduce errors from changing solar position during persistence data range.
     # Later, modeled clear sky or ac power will be averaged over the data range
-    closed = datamodel.CLOSED_MAPPING[observation.interval_label]
-    if closed is None:
+    if observation.interval_label in ('instant', 'event'):
         freq = observation.interval_length
     else:
         freq = pd.Timedelta('1min')
-    obs_range = pd.date_range(start=data_start, end=data_end, freq=freq,
-                              closed=closed)
+    obs_range = pd.date_range(
+        start=data_start, end=data_end, freq=freq,
+        inclusive=datamodel.INCLUSIVE_MAPPING[observation.interval_label])
     solar_position_obs = calc_solpos(obs_range)
     clearsky_obs = calc_cs(solar_position_obs['apparent_zenith'])
 
@@ -279,8 +280,9 @@ def persistence_scalar_index(observation, data_start, data_end, forecast_start,
     # Use 5 minute or better frequency to minimize solar position errors.
     # Later, modeled clear sky or ac power will be resampled to interval_length
     closed_fx = datamodel.CLOSED_MAPPING[interval_label]
-    fx_range = pd.date_range(start=forecast_start, end=forecast_end, freq=freq,
-                             closed=closed_fx)
+    fx_range = pd.date_range(
+        start=forecast_start, end=forecast_end, freq=freq,
+        inclusive=datamodel.INCLUSIVE_MAPPING[interval_label])
     solar_position_fx = calc_solpos(fx_range)
     clearsky_fx = calc_cs(solar_position_fx['apparent_zenith'])
 
@@ -310,6 +312,7 @@ def persistence_scalar_index(observation, data_start, data_end, forecast_start,
         clear_fx = clearsky_fx[observation.variable]
 
     # resample sub-interval reference clear sky to observation intervals
+    closed = datamodel.CLOSED_MAPPING[observation.interval_label]
     clear_ref_resampled = clear_ref.resample(
         observation.interval_length, closed=closed, label=closed).mean()
     # calculate persistence index (clear sky index or ac power index)
@@ -473,8 +476,9 @@ def persistence_probabilistic(observation, data_start, data_end,
 
     """
     closed = datamodel.CLOSED_MAPPING[interval_label]
-    fx_index = pd.date_range(start=forecast_start, end=forecast_end,
-                             freq=interval_length, closed=closed)
+    fx_index = pd.date_range(
+        start=forecast_start, end=forecast_end, freq=interval_length,
+        inclusive=datamodel.INCLUSIVE_MAPPING[interval_label])
 
     # observation data resampled to match forecast sampling
     obs = load_data(observation, data_start, data_end)
@@ -587,8 +591,9 @@ def persistence_probabilistic_timeofday(observation, data_start, data_end,
 
     closed_obs = datamodel.CLOSED_MAPPING[observation.interval_label]
     closed_fx = datamodel.CLOSED_MAPPING[interval_label]
-    fx_index = pd.date_range(start=forecast_start, end=forecast_end,
-                             freq=interval_length, closed=closed_fx)
+    fx_index = pd.date_range(
+        start=forecast_start, end=forecast_end, freq=interval_length,
+        inclusive=datamodel.INCLUSIVE_MAPPING[interval_label])
 
     # get observations from database
     obs_db = load_data(observation, data_start, data_end)

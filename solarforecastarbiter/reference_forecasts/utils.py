@@ -32,6 +32,11 @@ def get_issue_times(forecast, start_from):
     list
         pandas.Timestamp objects with the issues times for the particular day
         including the first issue time for the next day.
+
+    Raises
+    ------
+    ValueError
+        If the first issue time of the next day can't be determined.
     """
     start_time = forecast.issue_time_of_day
     if start_time.tzinfo is None:
@@ -51,9 +56,18 @@ def get_issue_times(forecast, start_from):
     possible_times = pd.DatetimeIndex(possible_times).tz_convert(
         start_from.tz).drop_duplicates()
     # then slice the broad range based on start_from day
-    startloc = possible_times.get_loc(start_from.floor('1d'), method='bfill')
-    endloc = possible_times.get_loc(
-        (start_from + pd.Timedelta('1d')).floor('1d'), method='bfill') + 1
+    next_day = (start_from + pd.Timedelta('1d')).floor('1d')
+    startloc = possible_times.searchsorted(start_from.floor('1d'))
+    endloc = possible_times.searchsorted(next_day) + 1
+    # the broad range can end before the first issue time of the next day
+    # when start_from is far from UTC. Raise rather than return a list
+    # that is missing it.
+    if endloc > len(possible_times):
+        raise ValueError(
+            f'Could not determine the first issue time on or after '
+            f'{next_day} for issue_time_of_day '
+            f'{forecast.issue_time_of_day} and run_length '
+            f'{forecast.run_length}')
     return list(possible_times[startloc:endloc])
 
 

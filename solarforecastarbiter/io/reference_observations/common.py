@@ -310,8 +310,12 @@ def _find_data_gaps(api, site_observations, start, end):
 def _post_data(api, fetch_func, site, site_observations, start, end):
     logger.debug('Fetching data for %s from %s to %s', site.name, start, end)
     obs_df = fetch_func(api, site, start, end)
+    # fetchers return pd.DataFrame() without a DatetimeIndex when there
+    # is no data, which can't be sliced by time
+    if obs_df.empty:
+        return
     # must be sorted for proper inexact start:end slicing
-    data_in_range = obs_df.sort_index()[start:end]
+    data_in_range = obs_df.sort_index().loc[start:end]
     if data_in_range.empty:
         return
     for obs in site_observations:
