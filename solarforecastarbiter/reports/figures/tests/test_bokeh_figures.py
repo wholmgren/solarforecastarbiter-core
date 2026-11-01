@@ -6,7 +6,7 @@ import pytest
 
 pytest.importorskip("bokeh", reason="requires [plotting] packages")  # noqa:E402,E501
 
-from bokeh.plotting import Figure
+from bokeh.plotting import figure
 from bokeh.models import ColumnDataSource
 import numpy as np
 
@@ -412,25 +412,25 @@ def metric_cds():
 
 def test_bar(metric_cds):
     out = figures.bar(metric_cds, 'mae')
-    assert isinstance(out, Figure)
+    assert isinstance(out, figure)
 
 
 def test_bar_no_metric(metric_cds):
     out = figures.bar(metric_cds, 'rmse')
-    assert isinstance(out, Figure)
+    assert isinstance(out, figure)
 
 
 def test_bar_empty_cds(metric_cds):
     cds = ColumnDataSource(data={k: [] for k in metric_cds.data.keys()})
     out = figures.bar(cds, 's')
-    assert isinstance(out, Figure)
+    assert isinstance(out, figure)
 
 
 def test_bar_subdivisions(metric_cds):
     out = figures.bar_subdivisions(metric_cds, 'hour', 'mae')
     assert isinstance(out, dict)
     assert len(out) == 1
-    assert all([isinstance(v, Figure) for v in out.values()])
+    assert all([isinstance(v, figure) for v in out.values()])
 
 
 def test_bar_subdivisions_no_cat(metric_cds):

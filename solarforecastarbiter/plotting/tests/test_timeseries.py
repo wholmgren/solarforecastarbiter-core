@@ -65,6 +65,9 @@ def test_add_hover_tool(addline, active):
         assert fig.tools[-1].tooltips[-1][0] == 'quality flags'
     else:
         assert len(fig.tools[-1].tooltips) == 2
+    # Bokeh 3 ignores formatters for keys without the @ field prefix
+    assert fig.tools[-1].formatters == {
+        '@timestamp': 'datetime', '@value': 'printf'}
 
 
 @pytest.mark.parametrize('df', [
@@ -112,7 +115,7 @@ def test_generate_forecast_figure(ac_power_forecast_metadata,
     # not great, just testing that script and div are returned
     out = timeseries.generate_forecast_figure(ac_power_forecast_metadata,
                                               forecast_values)
-    assert isinstance(out, bokeh.models.Column)
+    assert isinstance(out, bokeh.models.GridPlot)
 
 
 def test_generate_forecast_figure_components(ac_power_forecast_metadata,
@@ -136,7 +139,7 @@ def test_generate_observation_figure(validated_observation_values,
                                      ac_power_observation_metadata_label):
     out = timeseries.generate_observation_figure(
         ac_power_observation_metadata_label, validated_observation_values)
-    assert isinstance(out, bokeh.models.Column)
+    assert isinstance(out, bokeh.models.GridPlot)
 
 
 def test_generate_observation_figure_components(

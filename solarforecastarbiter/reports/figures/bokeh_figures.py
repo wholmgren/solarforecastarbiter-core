@@ -178,7 +178,7 @@ def timeseries(timeseries_value_cds, timeseries_meta_cds,
     palette = cycle(PALETTE)
 
     fig = figure(
-        sizing_mode='scale_width', plot_width=900, plot_height=300,
+        sizing_mode='scale_width', width=900, height=300,
         x_range=(start, end), x_axis_type='datetime',
         tools='pan,xwheel_zoom,box_zoom,box_select,lasso_select,reset,save',
         name='timeseries')
@@ -189,9 +189,7 @@ def timeseries(timeseries_value_cds, timeseries_meta_cds,
             timeseries_meta_cds, obs_hash, 'observation_hash')
         pair_indices = _boolean_filter_indices_by_pair(
             timeseries_value_cds, metadata['pair_index'])
-        view = CDSView(source=timeseries_value_cds, filters=[
-            BooleanFilter(pair_indices)
-        ])
+        view = CDSView(filter=BooleanFilter(pair_indices))
         plot_method, plot_kwargs, hover_kwargs = line_or_step(
             metadata['interval_label'])
         legend_label = metadata['observation_name']
@@ -207,8 +205,7 @@ def timeseries(timeseries_value_cds, timeseries_meta_cds,
             timeseries_meta_cds, fx_hash, 'forecast_hash')
         pair_indices = _boolean_filter_indices_by_pair(
             timeseries_value_cds, metadata['pair_index'])
-        view = CDSView(source=timeseries_value_cds,
-                       filters=[BooleanFilter(pair_indices)])
+        view = CDSView(filter=BooleanFilter(pair_indices))
         plot_method, plot_kwargs, hover_kwargs = line_or_step(
             metadata['interval_label'])
         legend_label = metadata['forecast_name']
@@ -274,7 +271,7 @@ def scatter(timeseries_value_cds, timeseries_meta_cds, units):
     # width will be updated later based on label length
     plot_width = plot_height + 50
     fig = figure(
-        plot_width=plot_width, plot_height=plot_height, match_aspect=True,
+        width=plot_width, height=plot_height, match_aspect=True,
         x_range=Range1d(xy_min, xy_max), y_range=Range1d(xy_min, xy_max),
         tools='pan,wheel_zoom,box_zoom,box_select,lasso_select,reset,save',
         name='scatter')
@@ -290,8 +287,7 @@ def scatter(timeseries_value_cds, timeseries_meta_cds, units):
             timeseries_meta_cds, fxhash, 'forecast_hash')
         pair_indices = _boolean_filter_indices_by_pair(
             timeseries_value_cds, metadata['pair_index'])
-        view = CDSView(source=timeseries_value_cds,
-                       filters=[BooleanFilter(pair_indices)])
+        view = CDSView(filter=BooleanFilter(pair_indices))
         label = metadata['forecast_name']
         r = fig.scatter(
             x='observation_values', y='forecast_values',
@@ -312,7 +308,7 @@ def scatter(timeseries_value_cds, timeseries_meta_cds, units):
     # widest part of the legend
     max_legend_length = max((len(label) for label, _ in scatters_labels))
     px_per_length = 7.75  # found through trial and error
-    fig.plot_width = int(fig.plot_width + max_legend_length * px_per_length)
+    fig.width = int(fig.width + max_legend_length * px_per_length)
 
     label = f'({units})'
     fig.xaxis.axis_label = 'Observed ' + label
@@ -405,10 +401,10 @@ def bar(cds, metric):
     palette = cycle(PALETTE)
     palette = [next(palette) for _ in x_range]
     metric_name = datamodel.ALLOWED_METRICS[metric]
-    view = CDSView(source=cds, filters=[
-        GroupFilter(column_name='metric', group=metric),
-        GroupFilter(column_name='category', group='total')
-    ])
+    view = CDSView(filter=(
+        GroupFilter(column_name='metric', group=metric)
+        & GroupFilter(column_name='category', group='total')
+    ))
     # TODO: add units to title
     fig = figure(x_range=x_range, width=800, height=200, title=metric_name,
                  name=f'{metric}_total_bar', toolbar_location='above',
@@ -531,21 +527,22 @@ def bar_subdivisions(cds, category, metric):
 
     y_data = np.asarray(cds.data['value'])[filter_]
     if len(y_data) == 0:
-        start, end = None, None
+        # Bokeh 3 rejects start=None, so leave the range automatic
+        fig_kwargs['y_range'] = DataRange1d()
     else:
         y_min = np.nanmin(y_data)
         y_max = np.nanmax(y_data)
         start, end = calc_y_start_end(y_min, y_max)
-    fig_kwargs['y_range'] = DataRange1d(start=start, end=end)
+        fig_kwargs['y_range'] = DataRange1d(start=start, end=end)
 
     unique_names = np.unique(np.asarray(cds.data['name'])[filter_])
 
     for name in unique_names:
-        view = CDSView(source=cds, filters=[
-            GroupFilter(column_name='metric', group=metric),
-            GroupFilter(column_name='category', group=category),
-            GroupFilter(column_name='name', group=name)
-        ])
+        view = CDSView(filter=(
+            GroupFilter(column_name='metric', group=metric)
+            & GroupFilter(column_name='category', group=category)
+            & GroupFilter(column_name='name', group=name)
+        ))
 
         # Create figure
         title = name + ' ' + metric_name
@@ -579,7 +576,7 @@ def bar_subdivisions(cds, category, metric):
                 (metric_name, '@value'),
             ]
             hover_kwargs = dict(tooltips=tooltips,
-                                formatters={'index': 'datetime'})
+                                formatters={'@index': 'datetime'})
         elif category == 'month' or category == 'weekday':
             # Categorical x-axis
             formatter = CategoricalTickFormatter()
@@ -657,7 +654,7 @@ def output_svg(fig, driver=None):
 
     Parameters
     ----------
-    fig : bokeh.plotting.Figure
+    fig : bokeh.plotting.figure
     driver : selenium.webdriver.remote.webdriver.WebDriver, default None
         Web driver to use to render SVG figures. With bokeh<2.0 this
         defaults to trying to use phantomjs.

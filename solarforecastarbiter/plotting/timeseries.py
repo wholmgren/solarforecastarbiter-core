@@ -79,8 +79,8 @@ def build_figure_title(object_name, start, end):
 
 def _single_quality_bar(flag_name, plot_width, x_range, color, source):
     qfig = figure(sizing_mode='stretch_width',
-                  plot_height=30,
-                  plot_width=plot_width,
+                  height=30,
+                  width=plot_width,
                   x_range=x_range,
                   toolbar_location=None,
                   min_border_bottom=0,
@@ -90,12 +90,12 @@ def _single_quality_bar(flag_name, plot_width, x_range, color, source):
                   y_axis_location=None)
     qfig.ygrid.grid_line_color = None
     qfig.line(x='timestamp', y=flag_name,
-              line_width=qfig.plot_height,
+              line_width=qfig.height,
               source=source, alpha=0.6,
               line_color=color)
     flag_label = Label(x=5, y=0,
                        x_units='screen', y_units='screen',
-                       text=flag_name, render_mode='css',
+                       text=flag_name,
                        border_line_color=None,
                        background_fill_alpha=0,
                        text_font_size='1em',
@@ -140,7 +140,7 @@ def make_quality_bars(source, plot_width, x_range):
 
     # add the title to the top bar if there are any bars
     if out:
-        out[0].plot_height = 60
+        out[0].height = 60
         out[0].title.text = 'Quality Flags'
         out[0].title.text_font_size = '1em'
 
@@ -160,7 +160,7 @@ def add_hover_tool(fig, source, **hover_kwargs):
     if 'active_flags' in source.data.keys():
         tooltips.append(('quality flags', '@active_flags'))
     hover = HoverTool(tooltips=tooltips, formatters={
-        'timestamp': 'datetime', 'value': 'printf'}, mode='vline',
+        '@timestamp': 'datetime', '@value': 'printf'}, mode='vline',
                       **hover_kwargs)
     fig.add_tools(hover)
 
@@ -188,7 +188,7 @@ def make_basic_timeseries(source, object_name, variable, interval_label,
 
     Returns
     -------
-    bokeh.models.Figure
+    bokeh.plotting.figure
         The figure with the timeseries
 
     Raises
@@ -205,8 +205,8 @@ def make_basic_timeseries(source, object_name, variable, interval_label,
         interval_label)
     figure_title = build_figure_title(object_name, first, last)
     fig = figure(title=figure_title, sizing_mode='scale_width',
-                 plot_width=plot_width,
-                 plot_height=300, x_range=(first, last),
+                 width=plot_width,
+                 height=300, x_range=(first, last),
                  x_axis_type='datetime',
                  tools='pan,wheel_zoom,box_zoom,zoom_in,zoom_out,reset,save',
                  toolbar_location='above',
