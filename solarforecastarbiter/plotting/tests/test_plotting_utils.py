@@ -52,6 +52,19 @@ def test_align_index_limit():
     assert_index_equal(out.index, nindex)
 
 
+@pytest.mark.parametrize('order', [
+    slice(None, None, -1),
+    [0, 5, 2, 7, 1, 4, 3, 6],
+])
+def test_align_index_unsorted(order):
+    index = pd.date_range(start='now', freq='15min',
+                          periods=8, name='timestamp')
+    data = pd.Series(range(8), index=index, dtype=float).iloc[order]
+    with pytest.raises(ValueError, match='must be sorted'):
+        utils.align_index(data, pd.Timedelta('15min'),
+                          limit=pd.Timedelta('60min'))
+
+
 @pytest.mark.parametrize('label,method', [
     ('instant', 'line'),
     ('beginning', 'step'),

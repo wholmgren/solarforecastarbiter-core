@@ -144,6 +144,21 @@ def test_issue_times_localized_dst(single_forecast):
                    pd.Timestamp('20200309T0300-04:00')]
 
 
+@pytest.mark.parametrize('start', [
+    pd.Timestamp('20190601T1200', tz='America/Phoenix'),
+    pd.Timestamp('20190601T2359', tz='America/Phoenix'),
+])
+def test_issue_times_next_day_missing(single_forecast, start):
+    # the next issue time, 20190602T1800-07:00, is past the end of the
+    # range of candidate times
+    fx = replace(
+        single_forecast,
+        issue_time_of_day=dt.time(1),
+        run_length=pd.Timedelta('24h'))
+    with pytest.raises(ValueError, match='first issue time on or after'):
+        utils.get_issue_times(fx, start)
+
+
 def test_issue_times_fx_gap(forecast_hr_begin):
     # 1-4 utc should not be included in output as 5 is the first
     # issue time for the day.

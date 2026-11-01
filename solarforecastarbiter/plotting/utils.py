@@ -28,7 +28,14 @@ def align_index(df, interval_length, limit=None):
     -------
     pandas.DataFrame or pandas.Series
        Same type as input `df` with an index with frequency `interval_length`
+
+    Raises
+    ------
+    ValueError
+        If the index of `df` is not sorted in increasing order.
     """
+    if not df.index.is_monotonic_increasing:
+        raise ValueError('df.index must be sorted in increasing order')
     period_end = df.index[-1]
     if limit is not None:
         period_start = df.index[

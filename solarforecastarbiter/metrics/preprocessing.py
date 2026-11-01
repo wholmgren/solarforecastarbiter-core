@@ -140,18 +140,9 @@ def _resample_event_obs(
     obs_flags['ISNAN'] = obs_data['value'].isna()
 
     # determine the points that should never contribute
-    # combine unique elements of tuple of tuples
-    discard_before_resample_flags = {'ISNAN'}
-    for f in filter(lambda x: x.discard_before_resample, quality_flags):
-        discard_before_resample_flags |= set(f.quality_flags)
-    discard_before_resample = obs_flags[sorted(discard_before_resample_flags)]
-    to_discard_before_resample = discard_before_resample.any(axis=1)
+    to_discard_before_resample, validation_results = \
+        _calc_discard_before_resample(obs_flags, quality_flags)
     obs_resampled = obs_data.loc[~to_discard_before_resample, 'value']
-
-    # construct validation results
-    counts = discard_before_resample.astype(int).sum(axis=0).to_dict()
-    counts['TOTAL DISCARD BEFORE RESAMPLE'] = to_discard_before_resample.sum()
-    validation_results = _counts_to_validation_results(counts, True)
 
     # resampling not allowed, so fill in 0 for discard after resample
     validation_results += _counts_to_validation_results(
