@@ -225,7 +225,7 @@ def test_compute_aggregate_missing_values_with_index(
             for id_ in ids[:3]}
     agg = utils.compute_aggregate(data, '1h', 'ending',
                                   'UTC', 'sum', aggobs[:-2], dfindex)
-    assert pd.isnull(agg['value'][missing_idx])
+    assert pd.isnull(agg['value'].iloc[missing_idx])
 
 
 def test_compute_aggregate_partial_missing_values_with_index(aggobs, ids):
@@ -263,8 +263,8 @@ def test_compute_aggregate_out_of_effective(aggobs, ids):
             for id_ in ids[:3]}
     max_time = pd.Series([o['effective_until'] for o in limited_aggobs]).max()
     ooe_index = pd.date_range(
-        max_time + pd.Timedelta('1H'),
-        max_time + pd.Timedelta('25H'),
+        max_time + pd.Timedelta('1h'),
+        max_time + pd.Timedelta('25h'),
         freq='60min'
     )
     with pytest.raises(ValueError) as e:

@@ -152,7 +152,7 @@ def test_apply_immediate_validation(
 
     out = data.copy()
     out['quality_flag'] = [
-        night_mask[0] | LATEST_VERSION_FLAG,
+        night_mask.iloc[0] | LATEST_VERSION_FLAG,
         DESCRIPTION_MASK_MAPPING['CLEARSKY EXCEEDED'] | LATEST_VERSION_FLAG,
         DESCRIPTION_MASK_MAPPING['OK'] | LATEST_VERSION_FLAG,
         DESCRIPTION_MASK_MAPPING['USER FLAGGED'] | LATEST_VERSION_FLAG,
@@ -175,7 +175,7 @@ def test_apply_immediate_validation_already_validated(
 
     out = data.copy()
     out['quality_flag'] = [
-        night_mask[0] | LATEST_VERSION_FLAG,
+        night_mask.iloc[0] | LATEST_VERSION_FLAG,
         DESCRIPTION_MASK_MAPPING['CLEARSKY EXCEEDED'] | LATEST_VERSION_FLAG,
         DESCRIPTION_MASK_MAPPING['OK'] | LATEST_VERSION_FLAG,
         DESCRIPTION_MASK_MAPPING['USER FLAGGED'] | LATEST_VERSION_FLAG,
@@ -240,7 +240,7 @@ def test_fetch_and_validate_observation_ghi(mocker, make_observation,
 
     out = data.copy()
     out['quality_flag'] = [
-        night_mask[0] | LATEST_VERSION_FLAG,
+        night_mask.iloc[0] | LATEST_VERSION_FLAG,
         DESCRIPTION_MASK_MAPPING['CLEARSKY EXCEEDED'] | LATEST_VERSION_FLAG,
         DESCRIPTION_MASK_MAPPING['OK'] | LATEST_VERSION_FLAG,
         DESCRIPTION_MASK_MAPPING['USER FLAGGED'] | LATEST_VERSION_FLAG,
@@ -280,7 +280,7 @@ def test_fetch_and_validate_observation_ghi_nones(
         LATEST_VERSION_FLAG
     )
     out['quality_flag'] = [
-        base | night_mask[0],
+        base | night_mask.iloc[0],
         base,
         base,
         base,
@@ -312,7 +312,7 @@ def test_fetch_and_validate_observation_not_listed(mocker, make_observation,
 
     out = data.copy()
     out['quality_flag'] = [
-        night_mask[0] | LATEST_VERSION_FLAG,
+        night_mask.iloc[0] | LATEST_VERSION_FLAG,
         LATEST_VERSION_FLAG,
         LATEST_VERSION_FLAG,
         DESCRIPTION_MASK_MAPPING['USER FLAGGED'] | LATEST_VERSION_FLAG,
@@ -368,7 +368,7 @@ def test_fetch_and_validate_observation_dni(mocker, make_observation,
 
     out = data.copy()
     out['quality_flag'] = [
-        night_mask[0] | LATEST_VERSION_FLAG,
+        night_mask.iloc[0] | LATEST_VERSION_FLAG,
         DESCRIPTION_MASK_MAPPING['OK'] | LATEST_VERSION_FLAG,
         DESCRIPTION_MASK_MAPPING['OK'] | LATEST_VERSION_FLAG,
         DESCRIPTION_MASK_MAPPING['USER FLAGGED'] | LATEST_VERSION_FLAG,
@@ -425,7 +425,7 @@ def test_fetch_and_validate_observation_dhi(mocker, make_observation,
 
     out = data.copy()
     out['quality_flag'] = [
-        night_mask[0] | LATEST_VERSION_FLAG,
+        night_mask.iloc[0] | LATEST_VERSION_FLAG,
         DESCRIPTION_MASK_MAPPING['OK'] | LATEST_VERSION_FLAG,
         DESCRIPTION_MASK_MAPPING['OK'] | LATEST_VERSION_FLAG,
         DESCRIPTION_MASK_MAPPING['USER FLAGGED'] | LATEST_VERSION_FLAG,
@@ -482,7 +482,7 @@ def test_fetch_and_validate_observation_poa_global(mocker, make_observation,
 
     out = data.copy()
     out['quality_flag'] = [
-        night_mask[0] | LATEST_VERSION_FLAG,
+        night_mask.iloc[0] | LATEST_VERSION_FLAG,
         DESCRIPTION_MASK_MAPPING['OK'] | LATEST_VERSION_FLAG,
         DESCRIPTION_MASK_MAPPING['OK'] | LATEST_VERSION_FLAG,
         DESCRIPTION_MASK_MAPPING['USER FLAGGED'] | LATEST_VERSION_FLAG,
@@ -540,7 +540,7 @@ def test_fetch_and_validate_observation_air_temperature(
     out = data.copy()
     out['quality_flag'] = [
         DESCRIPTION_MASK_MAPPING['OK'] |
-        night_mask[0] |
+        night_mask.iloc[0] |
         LATEST_VERSION_FLAG,
         DESCRIPTION_MASK_MAPPING['LIMITS EXCEEDED'] | LATEST_VERSION_FLAG,
         DESCRIPTION_MASK_MAPPING['OK'] | LATEST_VERSION_FLAG,
@@ -599,7 +599,7 @@ def test_fetch_and_validate_observation_wind_speed(
     out = data.copy()
     out['quality_flag'] = [
         DESCRIPTION_MASK_MAPPING['OK'] |
-        night_mask[0] |
+        night_mask.iloc[0] |
         LATEST_VERSION_FLAG,
         DESCRIPTION_MASK_MAPPING['LIMITS EXCEEDED'] | LATEST_VERSION_FLAG,
         DESCRIPTION_MASK_MAPPING['OK'] | LATEST_VERSION_FLAG,
@@ -658,7 +658,7 @@ def test_fetch_and_validate_observation_relative_humidity(
     out = data.copy()
     out['quality_flag'] = [
         DESCRIPTION_MASK_MAPPING['OK'] |
-        night_mask[0] |
+        night_mask.iloc[0] |
         LATEST_VERSION_FLAG,
         DESCRIPTION_MASK_MAPPING['LIMITS EXCEEDED'] | LATEST_VERSION_FLAG,
         DESCRIPTION_MASK_MAPPING['OK'] | LATEST_VERSION_FLAG,
@@ -716,7 +716,7 @@ def test_fetch_and_validate_observation_ac_power(mocker, make_observation,
 
     out = data.copy()
     out['quality_flag'] = [
-        night_mask[0] | LATEST_VERSION_FLAG,
+        night_mask.iloc[0] | LATEST_VERSION_FLAG,
         DESCRIPTION_MASK_MAPPING['LIMITS EXCEEDED'] | LATEST_VERSION_FLAG,
         DESCRIPTION_MASK_MAPPING['LIMITS EXCEEDED'] | LATEST_VERSION_FLAG,
         DESCRIPTION_MASK_MAPPING['USER FLAGGED'] | LATEST_VERSION_FLAG,
@@ -773,7 +773,7 @@ def test_fetch_and_validate_observation_dc_power(mocker, make_observation,
 
     out = data.copy()
     out['quality_flag'] = [
-        night_mask[0] | LATEST_VERSION_FLAG,
+        night_mask.iloc[0] | LATEST_VERSION_FLAG,
         DESCRIPTION_MASK_MAPPING['LIMITS EXCEEDED'] | LATEST_VERSION_FLAG,
         DESCRIPTION_MASK_MAPPING['LIMITS EXCEEDED'] | LATEST_VERSION_FLAG,
         DESCRIPTION_MASK_MAPPING['USER FLAGGED'] | LATEST_VERSION_FLAG,
@@ -855,7 +855,7 @@ def test_fetch_and_validate_observation_ghi_daily(mocker, make_observation,
 
     out = data.copy()
     out['quality_flag'] = [
-        night_mask[0] | BASE_FLAG,
+        night_mask.iloc[0] | BASE_FLAG,
         DESCRIPTION_MASK_MAPPING['LIMITS EXCEEDED'] |
         DESCRIPTION_MASK_MAPPING['CLEARSKY EXCEEDED'] |
         BASE_FLAG,
@@ -871,7 +871,7 @@ def test_fetch_and_validate_observation_ghi_daily(mocker, make_observation,
         DESCRIPTION_MASK_MAPPING['CLEARSKY EXCEEDED'] |
         BASE_FLAG,
         DESCRIPTION_MASK_MAPPING['CLEARSKY EXCEEDED'] | BASE_FLAG,
-        night_mask[-4] | BASE_FLAG,
+        night_mask.iloc[-4] | BASE_FLAG,
         DESCRIPTION_MASK_MAPPING['NIGHTTIME'] |
         DESCRIPTION_MASK_MAPPING['USER FLAGGED'] |
         DESCRIPTION_MASK_MAPPING['LIMITS EXCEEDED'] | BASE_FLAG,
@@ -995,7 +995,7 @@ def test_fetch_and_validate_observation_dc_power_daily(
     out = data.copy()
     out['quality_flag'] = [
         DESCRIPTION_MASK_MAPPING['LIMITS EXCEEDED'] |
-        night_mask[0] |
+        night_mask.iloc[0] |
         BASE_FLAG,
         DESCRIPTION_MASK_MAPPING['LIMITS EXCEEDED'] | BASE_FLAG,
         DESCRIPTION_MASK_MAPPING['LIMITS EXCEEDED'] | BASE_FLAG,
@@ -1011,7 +1011,7 @@ def test_fetch_and_validate_observation_dc_power_daily(
         DESCRIPTION_MASK_MAPPING['LIMITS EXCEEDED'] |
         BASE_FLAG,
         DESCRIPTION_MASK_MAPPING['LIMITS EXCEEDED'] | BASE_FLAG,
-        night_mask[-4] |
+        night_mask.iloc[-4] |
         BASE_FLAG,
         DESCRIPTION_MASK_MAPPING['USER FLAGGED'] |
         DESCRIPTION_MASK_MAPPING['NIGHTTIME'] |
@@ -1095,7 +1095,7 @@ def test_fetch_and_validate_observation_ac_power_daily(
     out = data.copy()
     out['quality_flag'] = [
         DESCRIPTION_MASK_MAPPING['LIMITS EXCEEDED'] |
-        night_mask[0] |
+        night_mask.iloc[0] |
         BASE_FLAG,
         DESCRIPTION_MASK_MAPPING['LIMITS EXCEEDED'] | BASE_FLAG,
         DESCRIPTION_MASK_MAPPING['LIMITS EXCEEDED'] | BASE_FLAG,
@@ -1115,7 +1115,7 @@ def test_fetch_and_validate_observation_ac_power_daily(
         BASE_FLAG,
         DESCRIPTION_MASK_MAPPING['LIMITS EXCEEDED'] | BASE_FLAG,
         DESCRIPTION_MASK_MAPPING['OK'] |
-        night_mask[-4] |
+        night_mask.iloc[-4] |
         BASE_FLAG,
         DESCRIPTION_MASK_MAPPING['USER FLAGGED'] |
         DESCRIPTION_MASK_MAPPING['NIGHTTIME'] |

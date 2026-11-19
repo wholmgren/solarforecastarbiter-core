@@ -1,5 +1,6 @@
 import itertools
 
+import numpy as np
 import pandas as pd
 from pandas.testing import assert_series_equal
 
@@ -72,10 +73,10 @@ def test_reindex_fill_slice_some_nan():
 
 
 def test_reindex_fill_slice_all_nan():
-    arg = pd.Series([None]*3, index=pd.DatetimeIndex(
+    arg = pd.Series([np.nan]*3, index=pd.DatetimeIndex(
         ['20190101 01', '20190101 02', '20190101 03']))
     out = forecast.reindex_fill_slice(arg, freq='30min')
-    exp = pd.Series([None]*5, index=pd.DatetimeIndex(
+    exp = pd.Series([np.nan]*5, index=pd.DatetimeIndex(
         ['20190101 01', '20190101 0130', '20190101 02', '20190101 0230',
          '20190101 03'], freq='30min'))
     assert_series_equal(out, exp)

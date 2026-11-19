@@ -61,7 +61,7 @@ def test_complete_irradiance_components():
 
 @pytest.fixture
 def times():
-    return pd.date_range(start='20190101', periods=2, freq='12H',
+    return pd.date_range(start='20190101', periods=2, freq='12h',
                          tz='Etc/GMT+7')
 
 

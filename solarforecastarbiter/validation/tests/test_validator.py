@@ -195,7 +195,7 @@ def times():
     MST = pytz.timezone('MST')
     return pd.date_range(start=datetime(2018, 6, 15, 12, 0, 0, tzinfo=MST),
                          end=datetime(2018, 6, 15, 13, 0, 0, tzinfo=MST),
-                         freq='10T')
+                         freq='10min')
 
 
 def test_check_ghi_clearsky(mocker, location, times):
@@ -213,7 +213,7 @@ def test_check_ghi_clearsky(mocker, location, times):
 
 def test_check_poa_clearsky(mocker, times):
     dt = pd.date_range(start=datetime(2019, 6, 15, 12, 0, 0),
-                       freq='15T', periods=5)
+                       freq='15min', periods=5)
     poa_global = pd.Series(index=dt, data=[800, 1000, 1200, -200, np.nan])
     poa_clearsky = pd.Series(index=dt, data=1000)
     result = validator.check_poa_clearsky(poa_global, poa_clearsky)
@@ -397,7 +397,7 @@ def ghi_clearsky():
     # Location looks up a default altitude (1594 m here) instead of 0 m.
     MST = pytz.timezone('Etc/GMT+7')
     dt = pd.date_range(start=datetime(2019, 4, 3, 5, 0, 0, tzinfo=MST),
-                       periods=60, freq='15T')
+                       periods=60, freq='15min')
     ghi = [
         0.0, 0.0, 0.0, 0.0, 0.0, 2.257, 22.992, 62.447, 111.437, 164.835,
         220.113, 275.887, 331.297, 385.744, 438.77, 490.0, 539.116, 585.839,
