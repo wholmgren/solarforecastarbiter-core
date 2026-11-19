@@ -767,21 +767,26 @@ def test_apisession_get_report_event(requests_mock, event_report_text,
 
 def test_apisession_get_report_with_raw(
         requests_mock, report_text, report_objects, mock_request_fxobs,
-        raw_report, mocker):
+        raw_report):
     raw = raw_report(False)
     raw_dict = raw.to_dict()
     report = json.loads(report_text)
     report['raw_report'] = raw_dict
     report_text = json.dumps(report).encode()
-    mocker.patch(
-        'solarforecastarbiter.io.api.APISession.get_raw_report_processed_data',
-        return_value=())
     session = api.APISession('')
     requests_mock.register_uri('GET', f'{session.base_url}/reports/',
                                content=report_text)
     out = session.get_report('')
+    # the report has no values, so get_report replaces the value ids of
+    # each processed forecast/observation with None. The rest of each one
+    # round trips through JSON, including the nan normalization.
+    pfos = tuple(
+        pfo.replace(forecast_values=None, observation_values=None,
+                    reference_forecast_values=None)
+        for pfo in raw.processed_forecasts_observations)
+    assert pfos
     expected = report_objects[0].replace(
-        raw_report=raw.replace(processed_forecasts_observations=()))
+        raw_report=raw.replace(processed_forecasts_observations=pfos))
     assert out == expected
 
 

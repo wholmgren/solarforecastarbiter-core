@@ -46,21 +46,25 @@ jobs:
         run: uv run --no-sync make -C docs html SPHINXOPTS="-W --keep-going"
 
   test:
-    name: test (${{ matrix.resolution }})
+    name: test (${{ matrix.python }}, ${{ matrix.resolution }})
     runs-on: ubuntu-latest
     timeout-minutes: 30
     strategy:
       fail-fast: false
       matrix:
+        python: ['3.11', '3.12', '3.13', '3.14']
+        resolution: [locked]
         include:
           # the versions in uv.lock
           - resolution: locked
             sync-args: --locked
-          # the lower bounds declared in pyproject.toml
-          - resolution: lowest-direct
+          # the lower bounds declared in pyproject.toml, on the oldest Python
+          - python: '3.11'
+            resolution: lowest-direct
             sync-args: --resolution lowest-direct
-          # the newest releases allowed by pyproject.toml
-          - resolution: highest
+          # the newest releases allowed by pyproject.toml, on the newest Python
+          - python: '3.14'
+            resolution: highest
             sync-args: --upgrade
 
     steps:
@@ -72,6 +76,7 @@ jobs:
       - uses: astral-sh/setup-uv@v6
         with:
           enable-cache: true
+          python-version: ${{ matrix.python }}
 
       - name: Install
         run: >-

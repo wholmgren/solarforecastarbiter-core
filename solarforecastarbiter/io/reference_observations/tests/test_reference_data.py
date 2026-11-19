@@ -26,7 +26,7 @@ def test_getapisession(mocker):
     mocked = mocker.patch(
         'solarforecastarbiter.io.reference_observations.reference_data.APISession')  # NOQA
     reference_data.get_apisession('TEST', 'url')
-    assert mocked.called_with('TEST', 'url')
+    mocked.assert_called_once_with('TEST', base_url='url')
 
 
 @pytest.fixture()
