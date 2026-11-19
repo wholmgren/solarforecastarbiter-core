@@ -7,6 +7,7 @@ from dataclasses import (dataclass, field, fields, MISSING, asdict,
 import datetime
 import itertools
 import json
+import math
 from jsonschema import validate
 from jsonschema.exceptions import ValidationError
 from typing import Optional, Tuple, Union, ClassVar
@@ -224,7 +225,34 @@ def _single_field_processing(model, field, val, field_type=None):
             model, field, val)
 
 
+def _is_nan(val):
+    return isinstance(val, (float, np.floating)) and math.isnan(val)
+
+
+def _field_eq(a, b):
+    return a is b or a == b or (_is_nan(a) and _is_nan(b))
+
+
 class BaseModel:
+    # Models are declared with @dataclass(frozen=True, eq=False) so that
+    # these replace the generated __eq__ and __hash__. Fields compare as
+    # dataclass fields do, except that nan equals nan: since Python 3.13
+    # dataclasses compare fields with ==, and before that nan fields
+    # matched only when they held the same object. A nan inside a plain
+    # tuple field, such as CostBand.error_range, still compares unequal.
+    def __eq__(self, other):
+        if other.__class__ is not self.__class__:
+            return NotImplemented
+        return all(_field_eq(getattr(self, f.name), getattr(other, f.name))
+                   for f in fields(self) if f.compare)
+
+    def __hash__(self):
+        # hash(nan) depends on the object, so hash every nan alike
+        return hash(tuple(
+            None if _is_nan(v) else v
+            for v in (getattr(self, f.name) for f in fields(self)
+                      if f.compare)))
+
     def _special_field_processing(self, model_field, val):
         return val
 
@@ -332,7 +360,7 @@ class BaseModel:
         return replace(self, **kwargs)
 
 
-@dataclass(frozen=True)
+@dataclass(frozen=True, eq=False)
 class Site(BaseModel):
     """
     Class for keeping track of Site metadata.
@@ -397,7 +425,7 @@ class Site(BaseModel):
         return super().from_dict(dict_, raise_on_extra)
 
 
-@dataclass(frozen=True)
+@dataclass(frozen=True, eq=False)
 class PVModelingParameters(BaseModel):
     """
     Class for keeping track of generic PV modeling parameters
@@ -428,7 +456,7 @@ class PVModelingParameters(BaseModel):
     ac_loss_factor: float
 
 
-@dataclass(frozen=True)
+@dataclass(frozen=True, eq=False)
 class FixedTiltModelingParameters(PVModelingParameters):
     """
     A class based on PVModelingParameters that has additional parameters
@@ -451,7 +479,7 @@ class FixedTiltModelingParameters(PVModelingParameters):
     tracking_type: str = 'fixed'
 
 
-@dataclass(frozen=True)
+@dataclass(frozen=True, eq=False)
 class SingleAxisModelingParameters(PVModelingParameters):
     """
     A class based on PVModelingParameters that has additional parameters
@@ -485,7 +513,7 @@ class SingleAxisModelingParameters(PVModelingParameters):
     tracking_type: str = 'single_axis'
 
 
-@dataclass(frozen=True)
+@dataclass(frozen=True, eq=False)
 class SolarPowerPlant(Site):
     """
     Class for keeping track of metadata associated with solar power plant
@@ -524,7 +552,7 @@ def __check_interval_params__(cls):
         cls, 'interval_value_type', ALLOWED_INTERVAL_VALUE_TYPES)
 
 
-@dataclass(frozen=True)
+@dataclass(frozen=True, eq=False)
 class Observation(BaseModel):
     """
     A class for keeping track of metadata associated with an observation.
@@ -581,7 +609,7 @@ class Observation(BaseModel):
         __check_interval_params__(self)
 
 
-@dataclass(frozen=True)
+@dataclass(frozen=True, eq=False)
 class AggregateObservation(BaseModel):
     """
     Class for keeping track of an Observation and when it is added and
@@ -633,7 +661,7 @@ def __check_aggregate_interval_compatibility__(interval, *args):
                          'interval_mean or instantaneous are acceptable')
 
 
-@dataclass(frozen=True)
+@dataclass(frozen=True, eq=False)
 class Aggregate(BaseModel):
     """
     Class for keeping track of Aggregate metadata. Aggregates always
@@ -708,7 +736,7 @@ class Aggregate(BaseModel):
         object.__setattr__(self, 'interval_value_type', 'interval_mean')
 
 
-@dataclass(frozen=True)
+@dataclass(frozen=True, eq=False)
 class _ForecastBase:
     name: str
     issue_time_of_day: datetime.time
@@ -720,7 +748,7 @@ class _ForecastBase:
     variable: str
 
 
-@dataclass(frozen=True)
+@dataclass(frozen=True, eq=False)
 class _ForecastDefaultsBase:
     site: Union[Site, None] = None
     aggregate: Union[Aggregate, None] = None
@@ -739,7 +767,7 @@ def __site_or_agg__(cls):
 
 # Follow MRO pattern in https://stackoverflow.com/a/53085935/2802993
 # to avoid problems with inheritance in ProbabilisticForecasts
-@dataclass(frozen=True)
+@dataclass(frozen=True, eq=False)
 class Forecast(BaseModel, _ForecastDefaultsBase, _ForecastBase):
     """
     A class to hold metadata for Forecast objects.
@@ -812,7 +840,7 @@ class Forecast(BaseModel, _ForecastDefaultsBase, _ForecastBase):
             return super().from_dict(dict_, raise_on_extra)
 
 
-@dataclass(frozen=True)
+@dataclass(frozen=True, eq=False)
 class EventForecast(Forecast):
     """
     Extends Forecast dataclass to include event forecast attributes.
@@ -876,14 +904,14 @@ def __set_constant_value_units__(cls):
         object.__setattr__(cls, 'constant_value_units', '%')
 
 
-@dataclass(frozen=True)
+@dataclass(frozen=True, eq=False)
 class _ProbabilisticForecastConstantValueBase:
     axis: str
     constant_value: float
     constant_value_units: str = field(init=False)
 
 
-@dataclass(frozen=True)
+@dataclass(frozen=True, eq=False)
 class ProbabilisticForecastConstantValue(
         Forecast, _ProbabilisticForecastConstantValueBase):
     """
@@ -948,14 +976,14 @@ class ProbabilisticForecastConstantValue(
         __set_constant_value_units__(self)
 
 
-@dataclass(frozen=True)
+@dataclass(frozen=True, eq=False)
 class _ProbabilisticForecastBase:
     axis: str
     constant_values: Tuple[Union[ProbabilisticForecastConstantValue, float, int], ...]  # NOQA
     constant_value_units: str = field(init=False)
 
 
-@dataclass(frozen=True)
+@dataclass(frozen=True, eq=False)
 class ProbabilisticForecast(
         Forecast, _ProbabilisticForecastBase):
     """
@@ -1044,7 +1072,7 @@ def __validate_cost__(index_var):
     return val
 
 
-@dataclass(frozen=True)
+@dataclass(frozen=True, eq=False)
 class TimeOfDayCost(BaseModel):
     """Cost values based on the time of day.
 
@@ -1078,7 +1106,7 @@ class TimeOfDayCost(BaseModel):
     __post_init__ = __validate_cost__('times')
 
 
-@dataclass(frozen=True)
+@dataclass(frozen=True, eq=False)
 class DatetimeCost(BaseModel):
     """Cost values based on datetimes.
 
@@ -1112,7 +1140,7 @@ class DatetimeCost(BaseModel):
     __post_init__ = __validate_cost__('datetimes')
 
 
-@dataclass(frozen=True)
+@dataclass(frozen=True, eq=False)
 class ConstantCost(BaseModel):
     """A constant cost per unit error of the forecasted variable
 
@@ -1132,7 +1160,7 @@ class ConstantCost(BaseModel):
     __post_init__ = __validate_cost__(None)
 
 
-@dataclass(frozen=True)
+@dataclass(frozen=True, eq=False)
 class CostBand(BaseModel):
     """Cost specification for one error band
 
@@ -1182,7 +1210,7 @@ class CostBand(BaseModel):
                 " 'constant'")
 
 
-@dataclass(frozen=True)
+@dataclass(frozen=True, eq=False)
 class ErrorBandCost(BaseModel):
     """Cost that varies based on the error value. For each error band,
     one of the other cost functions is applied to the errors within the band.
@@ -1206,7 +1234,7 @@ class ErrorBandCost(BaseModel):
     bands: Tuple[CostBand, ...]
 
 
-@dataclass(frozen=True)
+@dataclass(frozen=True, eq=False)
 class Cost(BaseModel):
     """Specify how cost metrics should be calculated.
 
@@ -1299,7 +1327,7 @@ def __check_interval_compatibility__(forecast, observation):
                          'interval average observations.')
 
 
-@dataclass(frozen=True)
+@dataclass(frozen=True, eq=False)
 class ForecastObservation(BaseModel):
     """
     Class for pairing Forecast and Observation objects for evaluation.
@@ -1384,7 +1412,7 @@ def __set_uncertainty__(self):
             object.__setattr__(self, 'uncertainty', unc)
 
 
-@dataclass(frozen=True)
+@dataclass(frozen=True, eq=False)
 class ForecastAggregate(BaseModel):
     """
     Class for pairing Forecast and Aggregate objects for evaluation.
@@ -1421,7 +1449,7 @@ class ForecastAggregate(BaseModel):
         __check_interval_compatibility__(self.forecast, self.data_object)
 
 
-@dataclass(frozen=True)
+@dataclass(frozen=True, eq=False)
 class BaseFilter(BaseModel):
     """
     Base class for filters to be applied in a report.
@@ -1443,7 +1471,7 @@ class BaseFilter(BaseModel):
                 'Do not know how to process dict into a Filter.')
 
 
-@dataclass(frozen=True)
+@dataclass(frozen=True, eq=False)
 class QualityFlagFilter(BaseFilter):
     """Quality flag filters to be applied in a report.
 
@@ -1489,7 +1517,7 @@ class QualityFlagFilter(BaseFilter):
                              'BITMASK_DESCRIPTION_DICT or DERIVED_MASKS')
 
 
-@dataclass(frozen=True)
+@dataclass(frozen=True, eq=False)
 class TimeOfDayFilter(BaseFilter):
     """
     Class representing a time of day filter to be applied in a report.
@@ -1507,7 +1535,7 @@ class TimeOfDayFilter(BaseFilter):
     # resample_threshold_percentage: float = 10.
 
 
-@dataclass(frozen=True)
+@dataclass(frozen=True, eq=False)
 class ValueFilter(BaseFilter):
     """
     Class representing an observation or forecast value filter to be
@@ -1573,7 +1601,7 @@ def __check_categories__(categories):
         raise ValueError('Categories must be in ALLOWED_CATEGORIES')
 
 
-@dataclass(frozen=True)
+@dataclass(frozen=True, eq=False)
 class ValidationResult(BaseModel):
     """Store the validation result for a flag or combination of flags.
 
@@ -1592,7 +1620,7 @@ class ValidationResult(BaseModel):
     before_resample: bool = True
 
 
-@dataclass(frozen=True)
+@dataclass(frozen=True, eq=False)
 class PreprocessingResult(BaseModel):
     """Stores summary information to record preprocessing results that
     detail how data has been handled.
@@ -1609,7 +1637,7 @@ class PreprocessingResult(BaseModel):
 
 
 # need apply filtering + resampling to each forecast obs pair
-@dataclass(frozen=True)
+@dataclass(frozen=True, eq=False)
 class ProcessedForecastObservation(BaseModel):
     """
     Hold the processed forecast and observation data with the resampling
@@ -1661,7 +1689,7 @@ class ProcessedForecastObservation(BaseModel):
     cost: Union[Cost, None] = None
 
 
-@dataclass(frozen=True)
+@dataclass(frozen=True, eq=False)
 class MetricValue(BaseModel):
     """Class for storing the result of a single metric calculation.
 
@@ -1683,7 +1711,7 @@ class MetricValue(BaseModel):
     value: float
 
 
-@dataclass(frozen=True)
+@dataclass(frozen=True, eq=False)
 class MetricResult(BaseModel):
     """Class for storing the results of many metric calculations for a single
     observation and forecast pair.
@@ -1741,7 +1769,7 @@ def __check_plot_spec__(plot_spec):
         raise ValueError('Figure spec must be a valid json object.')
 
 
-@dataclass(frozen=True)
+@dataclass(frozen=True, eq=False)
 class ReportFigure(BaseModel):
     """Parent class for different types of Report Figures"""
     def __post_init__(self):
@@ -1764,7 +1792,7 @@ class ReportFigure(BaseModel):
                 'Do not know how to process dict into a ReportFigure.')
 
 
-@dataclass(frozen=True)
+@dataclass(frozen=True, eq=False)
 class PlotlyReportFigure(ReportFigure):
     """A class for storing metric plots for a report with associated metadata.
 
@@ -1798,7 +1826,7 @@ class PlotlyReportFigure(ReportFigure):
         __check_plot_spec__(self.spec)
 
 
-@dataclass(frozen=True)
+@dataclass(frozen=True, eq=False)
 class BokehReportFigure(ReportFigure):
     """A class for storing metric plots for a report with associated metadata.
     Parameters
@@ -1834,7 +1862,7 @@ def __bokeh_or_plotly__(cls):
                        '"plotly_version" to RawReportPlots')
 
 
-@dataclass(frozen=True)
+@dataclass(frozen=True, eq=False)
 class RawReportPlots(BaseModel):
     """Class for storing collection of all metric plots on a raw report.
 
@@ -1857,7 +1885,7 @@ class RawReportPlots(BaseModel):
                                'RawReportPlots')
 
 
-@dataclass(frozen=True)
+@dataclass(frozen=True, eq=False)
 class ReportMessage(BaseModel):
     """Class for intercepting errors and warnings associated with report
     processing.
@@ -1876,7 +1904,7 @@ class ReportMessage(BaseModel):
     function: str
 
 
-@dataclass(frozen=True)
+@dataclass(frozen=True, eq=False)
 class TimePeriod(BaseModel):
     """Class for storing a generic time period. For example, a report
     outage.
@@ -1892,7 +1920,7 @@ class TimePeriod(BaseModel):
     end: pd.Timestamp
 
 
-@dataclass(frozen=True)
+@dataclass(frozen=True, eq=False)
 class RawReport(BaseModel):
     """Class for holding the result of processing a report request
     including some metadata, the calculated metrics, plots, the
@@ -1939,7 +1967,7 @@ def __check_cost_consistency__(object_pairs, available_costs):
                 'parameters specified here')
 
 
-@dataclass(frozen=True)
+@dataclass(frozen=True, eq=False)
 class ReportParameters(BaseModel):
     """Parameters required to define and generate a Report.
 
@@ -1995,7 +2023,7 @@ class ReportParameters(BaseModel):
         __check_cost_consistency__(self.object_pairs, self.costs)
 
 
-@dataclass(frozen=True)
+@dataclass(frozen=True, eq=False)
 class Report(BaseModel):
     """Class for keeping track of report metadata and the raw report that
     can later be rendered to HTML or PDF. Functions in

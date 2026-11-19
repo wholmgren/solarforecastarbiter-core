@@ -321,6 +321,55 @@ def test_dict_roundtrip(pdid_params):
     assert out == expected
 
 
+def test_json_roundtrip(pdid_params):
+    # each nan parsed from JSON is a new object, unlike np.nan
+    expected, _, model = pdid_params
+    out = model.from_dict(json.loads(json.dumps(expected.to_dict())))
+    assert out == expected
+    assert hash(out) == hash(expected)
+
+
+def test_raw_report_json_roundtrip(raw_report):
+    expected = raw_report(False)
+    out = datamodel.RawReport.from_dict(
+        json.loads(json.dumps(expected.to_dict())))
+    assert out == expected
+
+
+@pytest.mark.parametrize('model', [
+    m for m in vars(datamodel).values()
+    if isinstance(m, type) and issubclass(m, datamodel.BaseModel)
+    and m is not datamodel.BaseModel
+], ids=lambda m: m.__name__)
+def test_models_use_base_eq_and_hash(model):
+    # a model declared without eq=False gets the dataclass __eq__, which
+    # compares nan fields unequal
+    assert model.__eq__ is datamodel.BaseModel.__eq__
+    assert model.__hash__ is datamodel.BaseModel.__hash__
+
+
+@pytest.mark.parametrize('nan', [
+    float('nan'), json.loads('NaN'), np.float32('nan')])
+def test_nan_fields_equal(single_forecast, single_observation, nan):
+    fxobs = datamodel.ForecastObservation(single_forecast, single_observation)
+    assert np.isnan(fxobs.normalization)
+    other = fxobs.replace(normalization=nan)
+    assert other == fxobs
+    assert hash(other) == hash(fxobs)
+    assert fxobs.replace() in [fxobs]
+    assert fxobs.replace(normalization=1000.) != fxobs
+
+
+def test_series_fields_equal_when_identical(raw_report):
+    pfo = raw_report(True).processed_forecasts_observations[0]
+    assert pfo.replace() == pfo
+
+
+def test_eq_other_class(single_forecast, single_observation):
+    assert single_forecast != single_observation
+    assert single_forecast != 'forecast'
+
+
 def test_to_dict_recurse(single_forecast):
     @dataclass
     class Special(datamodel.BaseModel):

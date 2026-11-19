@@ -26,7 +26,7 @@ solarforecastarbiter-core follows the `PEP 8 -- Style Guide for Python Code
 <https://www.python.org/dev/peps/pep-0008/>`_. Maximum line length for code
 is 79 characters.
 
-Code must be compatible with Python 3.7 and above.
+Code must be compatible with Python 3.11 and above.
 
 Set your editor to strip extra whitespace from line endings. This
 prevents the git commit history from becoming cluttered with whitespace
