@@ -286,7 +286,8 @@ def test_convert_flag_frame_to_strings():
     frame = pd.DataFrame({'FIRST': [True, False, False],
                           'SECOND': [False, False, True],
                           'THIRD': [True, False, True]})
-    expected = pd.Series(['FIRST, THIRD', 'OK', 'SECOND, THIRD'])
+    expected = pd.Series(['FIRST, THIRD', 'OK', 'SECOND, THIRD'],
+                         dtype=object)
     out = quality_mapping.convert_flag_frame_to_strings(frame)
     assert_series_equal(expected, out)
 

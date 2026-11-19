@@ -4,6 +4,7 @@ and vice versa.
 from contextlib import contextmanager
 from functools import wraps
 from inspect import signature
+from io import StringIO
 import json
 import re
 
@@ -358,7 +359,7 @@ def deserialize_timeseries(data):
     data_str = re.search('(?<="data":)\\s*\\[[^\\[\\]]*\\](?=\\s*(,|}))', data)
     if data_str is None:
         raise ValueError('Could not locate data key in data string')
-    df = pd.read_json(data_str.group(0), orient=schema['orient'],
+    df = pd.read_json(StringIO(data_str.group(0)), orient=schema['orient'],
                       convert_dates=True)
     if objtype_str == 'Series':
         if df.empty:

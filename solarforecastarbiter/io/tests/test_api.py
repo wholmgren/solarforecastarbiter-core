@@ -1665,7 +1665,7 @@ def test_api_session_forecast_get_by_type_invalid_type():
         test_session._forecast_get_by_type('bad_type')
 
 
-def value_callback(include_qf=False, freq='1H'):
+def value_callback(include_qf=False, freq='1h'):
     def fn(request, context):
         query_params = parse_qs(request.query)
         start = pd.Timestamp(query_params['start'][0]).floor(freq)
@@ -1688,7 +1688,7 @@ def test_apisession_chunk_value_requests_obs_df(requests_mock):
     start = pd.Timestamp('2017-01-01T12:00:00-0700')
     end = pd.Timestamp('2020-01-01T12:25:00-0700')
     expected = pd.DataFrame(
-        index=pd.date_range(start, end, freq='1H', name='timestamp'),
+        index=pd.date_range(start, end, freq='1h', name='timestamp'),
         data={'value': 1.0, 'quality_flag': 0},
     )
     expected.index.freq = None
@@ -1711,7 +1711,7 @@ def test_apisession_chunk_value_requests_fx_series(requests_mock):
     end = pd.Timestamp('2020-01-01T12:25:00-0700')
     expected = pd.Series(
         1.,
-        index=pd.date_range(start, end, freq='1H', name='timestamp'),
+        index=pd.date_range(start, end, freq='1h', name='timestamp'),
         name='value',
     )
     expected.index.freq = None

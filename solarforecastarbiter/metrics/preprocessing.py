@@ -70,8 +70,7 @@ def apply_fill(fx_data, forecast, forecast_fill_method, start, end):
         # If any leading missing values fill with zeros.
         filled = fx_data.reindex(index=full_dt_index)
         count = filled.isna().sum()
-        filled.fillna(method='ffill', inplace=True)
-        filled.fillna(value=0, inplace=True)
+        filled = filled.ffill().fillna(value=0)
     else:
         # Value should be numeric
         try:

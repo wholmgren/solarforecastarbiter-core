@@ -2077,13 +2077,13 @@ def cdf_and_cv_report_data(cdf_and_cv_report_objects):
                               '50.0': np.arange(periods_1min/60)+1,
                               '75.0': np.arange(periods_1min/60)+2},
                              index=pd.date_range(start='2020-04-01T00:00:00',
-                                                 periods=periods_1min/60,
+                                                 periods=periods_1min // 60,
                                                  freq='60min',
                                                  tz='MST',
                                                  name='timestamp'))
     obs_df = obs_ser.to_frame('value')
     obs_df['quality_flag'] = OK
-    agg_df = obs_df.resample('60T').asfreq()
+    agg_df = obs_df.resample('60min').asfreq()
     agg_df['quality_flag'] = OK
 
     data = {
@@ -2306,7 +2306,7 @@ def cdf_and_cv_report_data_xy(cdf_and_cv_report_objects_xy):
                                             freq='1min',
                                             tz='MST',
                                             name='timestamp'))
-    periods_1h = periods_1min / 60
+    periods_1h = periods_1min // 60
     hourly_index = pd.date_range(
         start='2020-04-01T00:00:00',
         periods=periods_1h,
@@ -2325,7 +2325,7 @@ def cdf_and_cv_report_data_xy(cdf_and_cv_report_objects_xy):
         index=hourly_index)
     obs_df = obs_ser.to_frame('value')
     obs_df['quality_flag'] = OK
-    agg_df = obs_df.resample('60T').asfreq()
+    agg_df = obs_df.resample('60min').asfreq()
     agg_df['quality_flag'] = OK
 
     data = {

@@ -243,6 +243,13 @@ def _convert_version_mask(ser):
     return out
 
 
+def _fill_missing_flags(masks):
+    """Set flags missing from a version's masks to False"""
+    # fillna(False) on object columns no longer downcasts to bool in
+    # pandas 3, so fill through the nullable boolean dtype
+    return masks.astype('boolean').fillna(False).astype(bool)
+
+
 def _add_derived_masks(masks):
     """Copies input DataFrame and then adds new masks derived from
     input masks"""
@@ -255,7 +262,8 @@ def _add_derived_masks(masks):
         cols = operations[1:]
         args = [out[col] for col in cols]
         out[flag] = func(*args)
-    return pd.concat([out, masks[unvalidated]], sort=False).fillna(False)
+    return _fill_missing_flags(
+        pd.concat([out, masks[unvalidated]], sort=False))
 
 
 def convert_mask_into_dataframe(flag_series):
@@ -280,9 +288,8 @@ def convert_mask_into_dataframe(flag_series):
        flags in the series.
     """
     vers = get_version(flag_series)
-    fundamental_masks = flag_series.groupby(
-        vers, sort=False, group_keys=False).apply(
-        _convert_version_mask).fillna(False)
+    fundamental_masks = _fill_missing_flags(flag_series.groupby(
+        vers, sort=False, group_keys=False).apply(_convert_version_mask))
     out = _add_derived_masks(fundamental_masks)
     return out
 

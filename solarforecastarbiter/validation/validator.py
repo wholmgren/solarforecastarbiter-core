@@ -893,12 +893,12 @@ def detect_clearsky_ghi(ghi, ghi_clearsky):
         return pd.Series(0, index=ghi.index)
     # determine window length in minutes, 10 x interval for intervals <= 15m
     delta = ghi.index.to_series().diff()
-    delta_minutes = delta[1] / pd.Timedelta('60s')
+    delta_minutes = delta.iloc[1] / pd.Timedelta('60s')
     if delta_minutes <= 15:
         window_length = np.minimum(10*delta_minutes, 60.0)
         scale_factor = window_length / 10
         index = pd.date_range(
-            start=ghi.index[0], end=ghi.index[-1], freq=delta[1])
+            start=ghi.index[0], end=ghi.index[-1], freq=delta.iloc[1])
         adj_ghi = ghi.reindex(index)
         adj_ghi_clearsky = ghi_clearsky.reindex(index)
         with warnings.catch_warnings():

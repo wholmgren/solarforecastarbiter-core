@@ -140,7 +140,8 @@ def fetch(api, site, start, end, *, nrel_pvdaq_api_key):
     obs_df = _watts_to_mw(obs_df)
     try:
         obs_df = obs_df.tz_localize(site.timezone)
-    except NonExistentTimeError as e:
+    # pandas 3 raises ValueError rather than pytz's NonExistentTimeError
+    except (NonExistentTimeError, ValueError) as e:
         logger.warning(f'Could not localize data for site {site.name} '
                        f'due to DST issue: {e}')
         return pd.DataFrame()

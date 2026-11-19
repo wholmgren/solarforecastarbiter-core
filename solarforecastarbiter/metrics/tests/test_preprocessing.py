@@ -67,10 +67,10 @@ OK = int(0b10)  # OK version 0 (2)
 
 FOUR_HOUR_DF = pd.DataFrame(
     {'value': [np.nan] + [1.]*3, 'quality_flag': [NT, UF, NT_UF, OK]},
-    index=pd.date_range(start="20200301T00Z", periods=4, freq='H'))
+    index=pd.date_range(start="20200301T00Z", periods=4, freq='h'))
 
 FOUR_HOUR_SERIES = pd.Series(
-    [1.]*4, index=pd.date_range(start="20200301T00Z", periods=4, freq='H'))
+    [1.]*4, index=pd.date_range(start="20200301T00Z", periods=4, freq='h'))
 FOUR_HOUR_SERIES.freq = None
 
 SIXTEEN_15MIN_DF = pd.DataFrame(
@@ -1376,7 +1376,7 @@ def test__resample_event_obs(single_site, single_event_forecast_text,
 
     freq = pd.Timedelta(f"{obs_interval_length}min")
     index = pd.date_range(start="20200301T00Z", end="20200304T00Z", freq=freq)
-    obs_series = pd.Series(1, dtype=bool, index=index)
+    obs_series = pd.Series(True, dtype=object, index=index)
     obs_flags = pd.Series(2, index=index)
     obs_flags.iloc[0] = 18  # NIGHTTIME
     obs_series.iloc[1] = np.nan  # ISNAN
@@ -1749,7 +1749,7 @@ OUTAGE_FORECAST = datamodel.Forecast(
         freq='12h'
      )
      ),
-    (OUTAGE_FORECAST.replace(run_length=pd.Timedelta('1H')),
+    (OUTAGE_FORECAST.replace(run_length=pd.Timedelta('1h')),
      pd.Timestamp('2021-01-01T00:00Z'),
      pd.Timestamp('2021-01-02T00:00Z'),
      pd.date_range(
@@ -1758,7 +1758,7 @@ OUTAGE_FORECAST = datamodel.Forecast(
         freq='1h'
      )
      ),
-    (OUTAGE_FORECAST.replace(run_length=pd.Timedelta('24H')),
+    (OUTAGE_FORECAST.replace(run_length=pd.Timedelta('24h')),
      pd.Timestamp('2021-01-01T00:00Z'),
      pd.Timestamp('2021-01-02T00:00Z'),
      pd.date_range(
@@ -1777,8 +1777,8 @@ OUTAGE_FORECAST = datamodel.Forecast(
      )
      ),
     (OUTAGE_FORECAST.replace(
-        lead_time_to_start=pd.Timedelta('26H'),
-        run_length=pd.Timedelta('24H'),
+        lead_time_to_start=pd.Timedelta('26h'),
+        run_length=pd.Timedelta('24h'),
         issue_time_of_day=dt.time(hour=23),
      ),
      pd.Timestamp('2021-01-01T00:00Z'),
@@ -1790,8 +1790,8 @@ OUTAGE_FORECAST = datamodel.Forecast(
      )
      ),
     (OUTAGE_FORECAST.replace(
-        lead_time_to_start=pd.Timedelta('26H'),
-        run_length=pd.Timedelta('24H'),
+        lead_time_to_start=pd.Timedelta('26h'),
+        run_length=pd.Timedelta('24h'),
         issue_time_of_day=dt.time(hour=23),
      ),
      pd.Timestamp('2021-01-01T00:00', tz='America/Phoenix'),
@@ -1843,7 +1843,7 @@ def test_forecast_report_issue_times(forecast, start, end, expected):
         ),
       )
      ),
-    (OUTAGE_FORECAST.replace(run_length=pd.Timedelta('1H')),
+    (OUTAGE_FORECAST.replace(run_length=pd.Timedelta('1h')),
      pd.Timestamp('2021-01-01T00:00Z'),
      pd.Timestamp('2021-01-02T00:00Z'),
      (
@@ -1875,7 +1875,7 @@ OUTAGE_DATA = pd.DataFrame(
     index=pd.date_range(
         '2021-01-01T05:00Z',
         '2021-01-02T05:00Z',
-        freq='1H'
+        freq='1h'
     ),
     columns=['value']
 )
@@ -1897,11 +1897,11 @@ OUTAGE_DATA = pd.DataFrame(
          index=pd.date_range(
              '2021-01-01T05:00Z',
              '2021-01-01T11:00Z',
-             freq='1H'
+             freq='1h'
          ).append(pd.date_range(
              '2021-01-01T14:00Z',
              '2021-01-02T05:00Z',
-             freq='1H'
+             freq='1h'
          )),
          columns=['value']
       ),
@@ -1924,15 +1924,15 @@ OUTAGE_DATA = pd.DataFrame(
          index=pd.date_range(
              '2021-01-01T05:00Z',
              '2021-01-01T06:00Z',
-             freq='1H'
+             freq='1h'
          ).append(pd.date_range(
              '2021-01-01T09:00Z',
              '2021-01-01T12:00Z',
-             freq='1H'
+             freq='1h'
          )).append(pd.date_range(
              '2021-01-01T17:00Z',
              '2021-01-02T05:00Z',
-             freq='1H'
+             freq='1h'
          )),
          columns=['value']
       ),
@@ -1969,15 +1969,15 @@ OUTAGE_DATA = pd.DataFrame(
          index=pd.date_range(
              '2021-01-01T05:00Z',
              '2021-01-01T07:00Z',
-             freq='1H'
+             freq='1h'
          ).append(pd.date_range(
              '2021-01-01T10:00Z',
              '2021-01-01T13:00Z',
-             freq='1H'
+             freq='1h'
          )).append(pd.date_range(
              '2021-01-01T18:00Z',
              '2021-01-02T05:00Z',
-             freq='1H'
+             freq='1h'
          )),
          columns=['value']
       ),

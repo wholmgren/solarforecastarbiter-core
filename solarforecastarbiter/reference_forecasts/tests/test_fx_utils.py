@@ -539,7 +539,7 @@ def test_get_forecast_start_end_time_same_as_issue_time(
     assert fx_start == pd.Timestamp('20190422T0600')
     fx_end_exp = pd.Timestamp('20190422T0700')
     if adjust_for_interval_label:
-        fx_end_exp -= pd.Timedelta('1n')
+        fx_end_exp -= pd.Timedelta('1ns')
     assert fx_end == fx_end_exp
 
 
@@ -570,7 +570,7 @@ def test_get_forecast_start_end_time_tz(
     assert fx_start == exp_start
     fx_end_exp = exp_end
     if adjust_for_interval_label:
-        fx_end_exp -= pd.Timedelta('1n')
+        fx_end_exp -= pd.Timedelta('1ns')
     assert fx_end == fx_end_exp
 
 
@@ -584,7 +584,7 @@ def test_get_forecast_start_end_time_same_as_issue_time_n_x_run(
     assert fx_start == pd.Timestamp('20190422T1300')
     fx_end_exp = pd.Timestamp('20190422T1400')
     if adjust_for_interval_label:
-        fx_end_exp -= pd.Timedelta('1n')
+        fx_end_exp -= pd.Timedelta('1ns')
     assert fx_end == fx_end_exp
 
 
@@ -621,7 +621,7 @@ def test_get_forecast_start_end_time_instant(
     assert fx_start == pd.Timestamp('20190422T0600')
     fx_end_exp = pd.Timestamp('20190422T0700')
     if adjust_for_interval_label:
-        fx_end_exp -= pd.Timedelta('1n')
+        fx_end_exp -= pd.Timedelta('1ns')
     assert fx_end == fx_end_exp
 
 

@@ -295,15 +295,6 @@ def hijack_loggers(loggers, level=logging.INFO):
     del handler
 
 
-def _unique_key(try_key, keys, i=0):
-    if try_key in keys:
-        try_key += str(i)
-        i += 1
-        return _unique_key(try_key, keys, i)
-    else:
-        return try_key
-
-
 def generate_continuous_chunks(data, freq):
     """
     Generator to split data into continuous chunks with spacing of freq.
@@ -368,19 +359,8 @@ def generate_continuous_chunks(data, freq):
         return
 
     flags = delta != freq
-
-    group_key = '_cid'
-    if isinstance(data, pd.DataFrame):
-        keys = data.columns
-        group_key = _unique_key(group_key, keys)
-        data[group_key] = flags.cumsum()
-    elif isinstance(data, pd.Series):
-        keys = data.name
-        data = pd.DataFrame(
-            {keys: data, group_key: flags.cumsum()})
-
-    for _, group in data.groupby(group_key):
-        yield group[keys]
+    for _, group in data.groupby(flags.cumsum().to_numpy()):
+        yield group
 
 
 def merge_ranges(ranges):
